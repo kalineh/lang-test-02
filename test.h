@@ -9,6 +9,7 @@ struct Test
 };
 
 #define TEST_LOG(format, ...) printf(format, __VA_ARGS__); printf("\n");
+#define TEST_LOGN(format) printf(format); printf("\n");
 #define TEST_INIT() g_tests = new Test[1024];
 #define TEST_RELEASE() delete[] g_tests; g_test_count = 0;
 #define TEST_RUN() g_run_tests();
@@ -19,8 +20,8 @@ struct Test
 	g_test_count++;
 #define TEST_CHECK(cond) \
 	if (!cond) { \
-		TEST_LOG("failure:"); \
-		TEST_LOG(#cond); \
+		TEST_LOGN("[TEST] failure:"); \
+		TEST_LOGN("[TEST] " #cond); \
 		return false; \
 	}
 

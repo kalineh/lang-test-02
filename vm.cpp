@@ -6,7 +6,9 @@ void VM::init()
 	const int StackSize = 8 KB;
 
 	_stack = (mem8*)malloc(StackSize);
-	_top = 0;
+	memset(_stack, 0, StackSize);
+	
+    _top = _stack;
 	_ip = 0;
 
 	_debug_info = (StackDebugInfo*)malloc(sizeof(StackDebugInfo) * StackSize);

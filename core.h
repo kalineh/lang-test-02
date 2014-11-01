@@ -30,7 +30,7 @@ inline mem32 cast32_wrap(void* x) { return *((mem32*)&x); }
 }
 #define ofs32(p, o) (p + (o * 4))
 #define inc32(p) (p += 4);
-#define dec32(p) (p += 4);
+#define dec32(p) (p -= 4);
 
 #define KB *1024
 #define MB *1024*1024

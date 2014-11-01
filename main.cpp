@@ -79,6 +79,10 @@ bool test_assign_literal_multi(void* arg)
 
 	vm->execn(insts, countof(insts));
 
+	TEST_CHECK((cast32(vm->_stack[0]) == 42));
+	TEST_CHECK((cast32(vm->_stack[4]) == 100));
+	TEST_CHECK((vm->_top == vm->_stack));
+
 	return true;
 }
 
@@ -158,6 +162,8 @@ bool test_func_call(void* arg)
 int main(int argc, char** argv)
 {
 	VM vm;
+
+	mem8* top = vm._top;
 
 	vm.init();
 

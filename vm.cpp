@@ -6,6 +6,8 @@ void VM::init()
 	const int StackSize = 8 KB;
 
 	_stack = (char*)malloc(StackSize);
+	_ip = 0;
+
 	_debug_info = (StackDebugInfo*)malloc(sizeof(StackDebugInfo) * StackSize);
 
 	memset(_debug_info, 0, sizeof(StackDebugInfo) * StackSize);
@@ -23,7 +25,7 @@ void VM::release()
 
 void VM::exec(INST inst)
 {
-	LOG("[VM] exec: %8s: arg: 0x%p", bcstr(inst.bc), inst.arg);
+	LOG("[VM] exec: %8s: arg: %d", bcstr(inst.bc), (int)(int64_t(inst.arg) & 0xFFFFFFFF));
 }
 
 void VM::execn(INST* insts, int count)
@@ -38,10 +40,17 @@ const char* VM::bcstr(VM::BC bc)
 {
 	switch (bc)
 	{
-		case TY_INT: return "int";
-		case TY_FLOAT: return "float";
-		case TY_STRING: return "string";
-		case TY_FUNC: return "func";
+		case BC_PUSH_INT: return "PUSH_INT";
+		case BC_PUSH_FLOAT: return "PUSH_FLOAT";
+		case BC_PUSH_STRING: return "PUSH_STRING";
+		case BC_PUSH_FUNC: return "PUSH_FUNC";
+		case BC_POP_INT: return "POP_INT";
+		case BC_POP_FLOAT: return "POP_FLOAT";
+		case BC_POP_STRING: return "POP_STRING";
+		case BC_POP_FUNC: return "POP_FUNC";
+		case BC_DUP: return "DUP";
+		case BC_CALL: return "CALL";
+		case BC_RETN: return "RETN";
 
 		default:
 			ASSERTN(false);

@@ -5,17 +5,32 @@ struct VM
 {
 	enum BC
 	{
+		// stack[top] = arg;
+		// top++;
 		BC_PUSH_INT,
 		BC_PUSH_FLOAT,
 		BC_PUSH_STRING,
 		BC_PUSH_FUNC,
 
+		// stack[top + arg] = stack[top];
+		// top--;
 		BC_POP_INT,
 		BC_POP_FLOAT,
 		BC_POP_STRING,
 		BC_POP_FUNC,
-		// 
+
+		// stack[top] = stack[top + arg];
+		// top++;
+		BC_DUP,
+
+		// stack[top] = ip;
+		// ip = stack[top-1];
+		// top++;
 		BC_CALL,
+
+		// ip = stack[top];
+		// top--;
+		BC_RETN,
 	};
 
 	enum TY
@@ -46,14 +61,24 @@ struct VM
 		void* arg;
 	};
 
+	struct FRAME
+	{
+		INST* insts;
+	};
+
 	char* _stack;
 	char* _stack_ptr;
+	char* _ip;
+
+	char* _memory;
 
 	StackDebugInfo* _debug_info;
 
-
 	void init();
 	void release();
+
+	void step();
+	void call(INST* inst, int count);
 
 	void exec(INST inst);
 	void execn(INST* insts, int count);

@@ -45,7 +45,7 @@ pop stack[4]
 
 */
 
-#define MAKE_INST( bc, val ) { (VM::BC_##bc), (void*)val, }
+#define MAKE_INST( bc, val ) { (VM::BC_##bc), cast32(val), }
 
 bool test_assign_literal(void* arg)
 {

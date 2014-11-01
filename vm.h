@@ -58,7 +58,7 @@ struct VM
 	struct INST
 	{
 		BC bc;
-		void* arg;
+		int32_t arg;
 	};
 
 	struct FRAME
@@ -66,19 +66,15 @@ struct VM
 		INST* insts;
 	};
 
-	char* _stack;
-	char* _stack_ptr;
-	char* _ip;
-
-	char* _memory;
+	mem8* _stack;
+	mem8* _top;
+	mem8* _ip;
+	mem8* _memory;
 
 	StackDebugInfo* _debug_info;
 
 	void init();
 	void release();
-
-	void step();
-	void call(INST* inst, int count);
 
 	void exec(INST inst);
 	void execn(INST* insts, int count);
@@ -86,8 +82,5 @@ struct VM
 	const char* bcstr(BC bc);
 	int size(TY type);
 
-	void push(TY type, void* value);
-	void pop(TY type);
-
-	void call();
+	void step();
 };

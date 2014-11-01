@@ -17,6 +17,12 @@ struct Test
 	g_tests[g_test_count].func = &x; \
 	g_tests[g_test_count].arg = (void*)a; \
 	g_test_count++;
+#define TEST_CHECK(cond) \
+	if (!cond) { \
+		TEST_LOG("failure:"); \
+		TEST_LOG(#cond); \
+		return false; \
+	}
 
 
 extern Test* g_tests;

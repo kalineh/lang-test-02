@@ -11,7 +11,7 @@
 			"file": "vm.h",
 			"settings":
 			{
-				"buffer_size": 734,
+				"buffer_size": 980,
 				"line_ending": "Unix"
 			}
 		},
@@ -19,15 +19,7 @@
 			"file": "core.h",
 			"settings":
 			{
-				"buffer_size": 556,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test.cpp",
-			"settings":
-			{
-				"buffer_size": 365,
+				"buffer_size": 1078,
 				"line_ending": "Unix"
 			}
 		},
@@ -35,15 +27,7 @@
 			"file": "test.h",
 			"settings":
 			{
-				"buffer_size": 529,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "main.cpp",
-			"settings":
-			{
-				"buffer_size": 388,
+				"buffer_size": 715,
 				"line_ending": "Unix"
 			}
 		},
@@ -51,7 +35,15 @@
 			"file": "vm.cpp",
 			"settings":
 			{
-				"buffer_size": 1137,
+				"buffer_size": 1982,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.cpp",
+			"settings":
+			{
+				"buffer_size": 2668,
 				"line_ending": "Unix"
 			}
 		}
@@ -112,14 +104,16 @@
 	],
 	"file_history":
 	[
-		"/home/kalin/dev/lang-test-02/vm.h",
 		"/home/kalin/dev/lang-test-02/lang-test-02.sublime-project",
+		"/home/kalin/dev/lang-test-02/test.cpp",
+		"/home/kalin/dev/lang-test-02/test.h",
+		"/home/kalin/dev/lang-test-02/vm.h",
+		"/home/kalin/dev/lang-test-02/main.cpp",
+		"/home/kalin/dev/lang-test-02/vm.cpp",
+		"/home/kalin/dev/lang-test-02/core.h",
 		"/home/kalin/wd/FunkEngine/code/platforms/win32/vsproj/FunkEngine.sublime-project",
 		"/home/kalin/dev/lang-test-02/buildsh.sublime-build",
 		"/home/kalin/dev/lang-test-02/build.sh",
-		"/home/kalin/dev/lang-test-02/core.h",
-		"/home/kalin/dev/lang-test-02/test.h",
-		"/home/kalin/dev/lang-test-02/vm.cpp",
 		"/home/kalin/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
 		"/home/kalin/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap"
 	],
@@ -168,15 +162,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 734,
+						"buffer_size": 980,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								613,
-								613
+								980,
+								980
 							]
 						],
 						"settings":
@@ -211,10 +205,10 @@
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 675.0,
+						"translation.y": 614.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -223,21 +217,21 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 556,
+						"buffer_size": 1078,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								366,
-								366
+								961,
+								961
 							]
 						],
 						"settings":
 						{
 							"highlight_line": false,
-							"history_list_is_closing": true,
+							"spell_check": true,
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"vintage":
 							{
@@ -256,16 +250,16 @@
 								"repeat_data":
 								[
 									"vi",
-									"x",
+									"r-",
 									"mode_normal",
 									null
 								],
 								"sequence": "",
-								"xpos": 19
+								"xpos": 20
 							}
 						},
-						"translation.x": 36.0,
-						"translation.y": 0.0,
+						"translation.x": 0.0,
+						"translation.y": 180.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -273,32 +267,27 @@
 				},
 				{
 					"buffer": 2,
-					"file": "test.cpp",
+					"file": "test.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 365,
+						"buffer_size": 715,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								324,
-								324
+								384,
+								384
 							]
 						],
 						"settings":
 						{
-							"highlight_line": false,
-							"spell_check": true,
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false,
 							"vintage":
 							{
 								"_vintageous_glue_until_normal_mode": false,
-								"_vintageous_non_interactive": false,
-								"_vintageous_processing_notation": false,
 								"action": null,
 								"action_count": "",
 								"mode": "mode_normal",
@@ -310,32 +299,13 @@
 								"register": "\"",
 								"repeat_data":
 								[
-									"native",
-									[
-										"sequence",
-										{
-											"commands":
-											[
-												[
-													"insert",
-													{
-														"characters": "tests"
-													}
-												],
-												[
-													"insert",
-													{
-														"characters": " "
-													}
-												]
-											]
-										}
-									],
-									"mode_insert",
+									"vi",
+									"x",
+									"mode_normal",
 									null
 								],
 								"sequence": "",
-								"xpos": 27
+								"xpos": 0
 							}
 						},
 						"translation.x": 0.0,
@@ -344,83 +314,33 @@
 					},
 					"stack_index": 3,
 					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "test.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 529,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								108,
-								108
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"vintage":
-							{
-								"_vintageous_glue_until_normal_mode": false,
-								"action": null,
-								"action_count": "",
-								"mode": "mode_normal",
-								"motion": null,
-								"motion_count": "",
-								"must_capture_register_name": false,
-								"normal_insert_count": "1",
-								"partial_sequence": "",
-								"register": "\"",
-								"repeat_data":
-								[
-									"vi",
-									"x",
-									"mode_normal",
-									null
-								],
-								"sequence": "",
-								"xpos": 17
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 117.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
-					"buffer": 4,
-					"file": "main.cpp",
+					"buffer": 3,
+					"file": "vm.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 388,
+						"buffer_size": 1982,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								370,
-								370
+								567,
+								567
 							]
 						],
 						"settings":
 						{
+							"highlight_line": false,
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"translate_tabs_to_spaces": false,
 							"vintage":
@@ -436,70 +356,41 @@
 								"must_capture_register_name": false,
 								"normal_insert_count": "1",
 								"partial_sequence": "",
+								"recording": false,
 								"register": "\"",
 								"repeat_data":
 								[
-									"native",
-									[
-										"sequence",
-										{
-											"commands":
-											[
-												[
-													"_vi_o",
-													{
-														"count": 1,
-														"mode": "mode_internal_normal"
-													}
-												],
-												[
-													"insert",
-													{
-														"characters": "\nvm.R"
-													}
-												],
-												[
-													"left_delete",
-													null
-												],
-												[
-													"insert",
-													{
-														"characters": "release();"
-													}
-												]
-											]
-										}
-									],
-									"mode_insert",
+									"vi",
+									"dd",
+									"mode_internal_normal",
 									null
 								],
 								"sequence": "",
-								"xpos": 16
+								"xpos": 12
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 45.0,
+						"translation.y": 54.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "vm.cpp",
+					"buffer": 4,
+					"file": "main.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1137,
+						"buffer_size": 2668,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1137,
-								1137
+								2616,
+								2616
 							]
 						],
 						"settings":
@@ -523,25 +414,24 @@
 								"register": "\"",
 								"repeat_data":
 								[
-									"native",
+									"vi",
+									"x",
+									"mode_normal",
 									[
-										"insert",
-										{
-											"characters": "N"
-										}
-									],
-									"mode_insert",
-									null
+										6,
+										0,
+										"mode_visual_line"
+									]
 								],
 								"sequence": "",
 								"xpos": 0
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 819.0,
+						"translation.y": 2754.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -609,16 +499,20 @@
 				"test.h"
 			],
 			[
-				"vm.cpp",
-				"vm.cpp"
-			],
-			[
 				"main.cpp",
 				"main.cpp"
 			],
 			[
 				"core.h",
 				"core.h"
+			],
+			[
+				"vm.cpp",
+				"vm.cpp"
+			],
+			[
+				"main.cp",
+				"main.cpp"
 			],
 			[
 				"vm.h",
@@ -658,13 +552,13 @@
 	"selected_group": 1,
 	"settings":
 	{
-		"_vintageous_last_buffer_search": "init",
-		"_vintageous_last_char_search_command": "vi_big_f",
-		"_vintageous_last_character_search": ")",
+		"_vintageous_last_buffer_search": "inc32",
+		"_vintageous_last_char_search_command": "vi_f",
+		"_vintageous_last_character_search": "%",
 		"_vintageous_reset_during_init": true,
 		"vintage":
 		{
-			"_cmdline_cd": "/opt/sublime_text"
+			"_cmdline_cd": "/home/kalin/dev/lang-test-02"
 		}
 	},
 	"show_minimap": true,

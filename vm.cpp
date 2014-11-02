@@ -39,6 +39,7 @@ void VM::exec(INST inst)
 		case BC_PUSH_FLOAT:
 		case BC_PUSH_STRING:
 		case BC_PUSH_FUNC:
+		case BC_PUSH_PTR:
 		{
 			write32(_top, arg);
 			inc32(_top);
@@ -49,6 +50,7 @@ void VM::exec(INST inst)
 		case BC_POP_FLOAT:
 		case BC_POP_STRING:
 		case BC_POP_FUNC:
+		case BC_POP_PTR:
 		{
 			mem8* write = ofs32(_top, arg);
 			mem32 val = cast32(*_top);
@@ -66,11 +68,16 @@ void VM::exec(INST inst)
 
 		case BC_CALL:
 		{
+			// ptr dst = stack[top];
+			// stack[top] = ip + 1
+			// ip = dst;
 			break;
 		}
 
 		case BC_RETN:
 		{
+			// ip = stack[top]
+			// top--;
 			break;
 		}
 

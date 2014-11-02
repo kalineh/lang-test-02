@@ -1,6 +1,17 @@
 
 #include "core.h"
 
+// call convention
+// - push : arg..N
+// - push : retval
+// - push : func id
+// - call : get id from top, set top = retn ip
+// - >> pop : arg..N
+// - >> ...
+// - >> retn top-1 (top is retval)
+// - cont here
+
+
 struct VM
 {
 	enum BC
@@ -11,6 +22,7 @@ struct VM
 		BC_PUSH_FLOAT,
 		BC_PUSH_STRING,
 		BC_PUSH_FUNC,
+		BC_PUSH_PTR,
 
 		// stack[top + arg] = stack[top];
 		// top--;
@@ -18,10 +30,18 @@ struct VM
 		BC_POP_FLOAT,
 		BC_POP_STRING,
 		BC_POP_FUNC,
+		BC_POP_PTR,
 
 		// stack[top] = stack[top + arg];
 		// top++;
 		BC_DUP,
+
+		// stack[top] = &stack[top + arg];
+		// top++;
+		BC_LOAD,
+
+		// *stack[top + arg] = stack[top];
+		BC_STORE,
 
 		// stack[top] = ip;
 		// ip = stack[top-1];
@@ -39,6 +59,7 @@ struct VM
 		TY_FLOAT,
 		TY_STRING,
 		TY_FUNC,
+		TY_PTR,
 	};
 
 	struct StackDebugInfo

@@ -1,52 +1,6 @@
 
 #include "core.h"
 
-
-/*
-
-var f = () { return 10; };
-var x = 1;
-var y = f();
-var z = x + y;
-
-.func
-pop args
-push 10
-retn
-
-.stackalloc 4
-
-// f = func
-push func
-pop stack[0]
-
-// x = 1
-push 1
-pop stack[1]
-
-// y = f()
-push args
-push func
-call
-pop func
-pop stack[3]
-
-// z = x + y
-push x
-push y
-add
-pop stack[4]
-
-// when insts are generated from ast
-// we produce a stack and a map of local var to stackpos
-// so we can pull a local var with (DUP, offset-from-top)
-// and assign with (POP, offset-from-top)
-// the messy part is that the offsets are order-dependent
-
-// call 
-
-*/
-
 #define MAKE_INST( bc, val ) { (VM::BC_##bc), cast32(val), }
 
 bool test_assign_literal(void* arg)
@@ -61,6 +15,9 @@ bool test_assign_literal(void* arg)
 	VM* vm = (VM*)arg;
 
 	vm->execn(insts, countof(insts));
+
+	TEST_CHECK((vm->_stack[SZ * 0] == 42));
+	TEST_CHECK((vm->_top == 0));
 
 	return true;
 }
@@ -81,8 +38,8 @@ bool test_assign_literal_multi(void* arg)
 
 	vm->execn(insts, countof(insts));
 
-	TEST_CHECK((cast32(vm->_stack[0]) == 42));
-	TEST_CHECK((cast32(vm->_stack[4]) == 100));
+	TEST_CHECK((cast32(vm->_stack[SZ * 0]) == 42));
+	TEST_CHECK((cast32(vm->_stack[SZ * 1]) == 100));
 	TEST_CHECK((vm->_top == 0));
 
 	return true;
@@ -107,6 +64,9 @@ bool test_assign_from_local(void* arg)
 
 	vm->execn(insts, countof(insts));
 
+	TEST_CHECK((cast32(vm->_stack[SZ * 0]) == 42));
+	TEST_CHECK((cast32(vm->_stack[SZ * 1]) == 42));
+	TEST_CHECK((cast32(vm->_stack[SZ * 2]) == 42));
 	TEST_CHECK((vm->_top == 0));
 
 	return true;

@@ -42,7 +42,7 @@ void VM::exec(INST inst)
 		case BC_PUSH_PTR:
 		{
 			write32(&_stack[_top], arg);
-			_top += ISZ;
+			_top += SZ;
 			break;
 		}
 
@@ -53,16 +53,19 @@ void VM::exec(INST inst)
 		case BC_POP_PTR:
 		{
 			mem8* write = _stack + _top;
-			mem32 val = cast32(_stack[_top]);
+			mem32 val = *ptr32(&_stack[_top]);
 			write32(write, val);
-			_top -= ISZ;
+			_top -= SZ;
 			break;
 		}
 
 		case BC_DUP:
 		{
-			write32(&_stack[_top], arg);
-			_top += ISZ;
+			mem8* read = _stack + _top + (arg * SZ);
+			mem8* write = _stack + _top;
+			mem32 val = *ptr32(read);
+			write32(write, val);
+			_top += SZ;
 			break;
 		}
 
@@ -103,11 +106,15 @@ const char* VM::bcstr(VM::BC bc)
 		case BC_PUSH_FLOAT: return "PUSH_FLOAT";
 		case BC_PUSH_STRING: return "PUSH_STRING";
 		case BC_PUSH_FUNC: return "PUSH_FUNC";
+		case BC_PUSH_PTR: return "PUSH_PTR";
 		case BC_POP_INT: return "POP_INT";
 		case BC_POP_FLOAT: return "POP_FLOAT";
 		case BC_POP_STRING: return "POP_STRING";
 		case BC_POP_FUNC: return "POP_FUNC";
+		case BC_POP_PTR: return "POP_PTR";
 		case BC_DUP: return "DUP";
+		case BC_LOAD: return "LOAD";
+		case BC_STORE: return "STORE";
 		case BC_CALL: return "CALL";
 		case BC_RETN: return "RETN";
 
@@ -121,14 +128,15 @@ int VM::size(VM::TY type)
 {
 	switch (type)
 	{
-		case TY_INT: return 4;
-		case TY_FLOAT: return 4;
-		case TY_STRING: return 4;
-		case TY_FUNC: return 4;
+		case TY_INT: return SZ;
+		case TY_FLOAT: return SZ;
+		case TY_STRING: return SZ;
+		case TY_FUNC: return SZ;
+		case TY_PTR: return SZ;
 
 		default:
 			ASSERTN(false);
-			return 0;
+			return SZ;
 	}
 }
 

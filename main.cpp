@@ -83,7 +83,7 @@ bool test_assign_literal_multi(void* arg)
 
 	TEST_CHECK((cast32(vm->_stack[0]) == 42));
 	TEST_CHECK((cast32(vm->_stack[4]) == 100));
-	TEST_CHECK((vm->_top == vm->_stack));
+	TEST_CHECK((vm->_top == 0));
 
 	return true;
 }
@@ -107,7 +107,7 @@ bool test_assign_from_local(void* arg)
 
 	vm->execn(insts, countof(insts));
 
-	TEST_CHECK((vm->_top == vm->_stack));
+	TEST_CHECK((vm->_top == 0));
 
 	return true;
 }
@@ -136,7 +136,7 @@ bool test_func_decl(void* arg)
 
 	vm->execn(insts, countof(insts));
 
-	TEST_CHECK((vm->_top == vm->_stack));
+	TEST_CHECK((vm->_top == 0));
 
 	return true;
 }
@@ -178,7 +178,7 @@ bool test_func_call(void* arg)
 	TEST_CHECK((cast32(vm->_stack[0]) == fid0));
 	TEST_CHECK((cast32(vm->_stack[4]) == 0));
 	TEST_CHECK((cast32(vm->_stack[8]) == 5));
-	TEST_CHECK((vm->_top == vm->_stack));
+	TEST_CHECK((vm->_top == 0));
 
 	return true;
 }
@@ -209,7 +209,7 @@ bool test_int_ptr(void* arg)
 
 	vm->execn(insts, countof(insts));
 
-	TEST_CHECK((vm->_top == vm->_stack));
+	TEST_CHECK((vm->_top == 0));
 
 	return true;
 }
@@ -218,8 +218,6 @@ bool test_int_ptr(void* arg)
 int main(int argc, char** argv)
 {
 	VM vm;
-
-	mem8* top = vm._top;
 
 	vm.init();
 

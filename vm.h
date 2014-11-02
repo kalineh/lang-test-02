@@ -88,9 +88,10 @@ struct VM
 	};
 
 	mem8* _stack;
-	mem8* _top;
-	mem8* _ip;
 	mem8* _memory;
+
+	int _top;
+	int _ip;
 
 	StackDebugInfo* _debug_info;
 

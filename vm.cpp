@@ -8,7 +8,7 @@ void VM::init()
 	_stack = (mem8*)malloc(StackSize);
 	memset(_stack, 0, StackSize);
 	
-    _top = _stack;
+    _top = 0;
 	_ip = 0;
 
 	_debug_info = (StackDebugInfo*)malloc(sizeof(StackDebugInfo) * StackSize);
@@ -41,8 +41,8 @@ void VM::exec(INST inst)
 		case BC_PUSH_FUNC:
 		case BC_PUSH_PTR:
 		{
-			write32(_top, arg);
-			inc32(_top);
+			write32(&_stack[_top], arg);
+			_top += ISZ;
 			break;
 		}
 
@@ -52,17 +52,17 @@ void VM::exec(INST inst)
 		case BC_POP_FUNC:
 		case BC_POP_PTR:
 		{
-			mem8* write = ofs32(_top, arg);
-			mem32 val = cast32(*_top);
+			mem8* write = _stack + _top;
+			mem32 val = cast32(_stack[_top]);
 			write32(write, val);
-			dec32(_top);
+			_top -= ISZ;
 			break;
 		}
 
 		case BC_DUP:
 		{
-			write32(_top, arg);
-			inc32(_top);
+			write32(&_stack[_top], arg);
+			_top += ISZ;
 			break;
 		}
 

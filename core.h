@@ -24,13 +24,15 @@ inline mem32 cast32_wrap(void* x) { return *((mem32*)&x); }
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))
 #define cast32(a) cast32_wrap(a)
-#define write32(dst, val) { \
-	mem32 inner = val; \
-	memcpy(dst, &inner, sizeof(mem32)); \
-}
-#define ofs32(p, o) (p + (o * 4))
-#define inc32(p) (p += 4);
-#define dec32(p) (p -= 4);
+
+inline void write32(mem8* p, mem32 val) { memcpy(p, &val, sizeof(mem32)); }
+inline void read32(mem8* p, mem32* val) { memcpy(val, p, sizeof(mem32)); }
+
+inline mem8* ofs32(mem8* p, int ofs) { return p + ofs * 4; }
+inline mem8* inc32(mem8* p) { return ofs32(p, +1); }
+inline mem8* dec32(mem8* p) { return ofs32(p, -1); }
+
+#define ISZ 4
 
 #define KB *1024
 #define MB *1024*1024

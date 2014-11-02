@@ -69,6 +69,26 @@ void VM::exec(INST inst)
 			break;
 		}
 
+		case BC_LOAD:
+		{
+			mem8* read = _stack + _top + (arg * SZ);
+			mem8* write = _stack + _top;
+			mem32 vptr = *ptr32(read);
+			mem32 val = _memory[vptr];
+			write32(write, val);
+			break;
+		}
+
+		case BC_STORE:
+		{
+			mem8* read = _stack + _top;
+			mem8* write = _stack + _top + (arg * SZ);
+			mem32 val = *ptr32(read);
+			mem32 vptr = *ptr32(write);
+			_memory[vptr] = val;
+			break;
+		}
+
 		case BC_CALL:
 		{
 			// ptr dst = stack[top];

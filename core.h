@@ -33,7 +33,7 @@ inline mem32 cast32_wrap(void* x) { return *((mem32*)&x); }
 #define ptr32(p) ((mem32*)(p))
 
 inline void write32(mem8* p, mem32 val) { memcpy(p, &val, sizeof(mem32)); }
-inline void read32(mem8* p, mem32* val) { memcpy(val, p, sizeof(mem32)); }
+//inline void read32(mem8* p, mem32* val) { memcpy(val, p, sizeof(mem32)); }
 
 inline mem8* ofs32(mem8* p, int ofs) { return p + ofs * SZ; }
 inline mem8* inc32(mem8* p) { return ofs32(p, +1); }

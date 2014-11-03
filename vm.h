@@ -24,8 +24,8 @@ struct VM
 		BC_PUSH_FUNC,
 		BC_PUSH_PTR,
 
-		// stack[top + arg] = stack[top];
 		// top--;
+		// stack[top + arg] = stack[top];
 		BC_POP_INT,
 		BC_POP_FLOAT,
 		BC_POP_STRING,
@@ -51,6 +51,9 @@ struct VM
 		// ip = stack[top];
 		// top--;
 		BC_RETN,
+
+		// breakpoint
+		BC_BRK,
 	};
 
 	enum TY
@@ -107,4 +110,8 @@ struct VM
 	int size(TY type);
 
 	void step();
+
+	void print_stack(int count = 0);
+	void print_code(int count = 0);
+	void print_data(int count = 0);
 };

@@ -122,9 +122,6 @@ bool test_func_call(void* arg)
 	// f0 := () { return 5; };
 	// x := f();
 
-	// f1 := (a, b) { return 5; };
-	// x := f(1, 2);
-
 	const int fid0 = 100;
 	const int faddr0 = 22;
 
@@ -149,12 +146,12 @@ bool test_func_call(void* arg)
 		MAKE_INST(PUSH_INT, 0),			// f0, 0, retv
 		MAKE_INST(PUSH_FUNC, fid0),		// f0, 0, retv, fid0
 
-		MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
+		//MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
 
 			// placeholder func instructions
-			//MAKE_INST(PUSH_INT, 5),		// f0, 0, retv, retn, 5
-			//MAKE_INST(POP_INT, -2),		// f0, 0, retv.5, retn
-			//MAKE_INST(RETN, 0),			// f0, 0, retv.5
+			MAKE_INST(PUSH_INT, 5),		// f0, 0, retv, retn, 5
+			MAKE_INST(POP_INT, -2),		// f0, 0, retv.5, retn
+			MAKE_INST(RETN, 0),			// f0, 0, retv.5
 
 		MAKE_INST(POP_INT, -1),			// f0, 5
 		MAKE_INST(POP_INT, 0),			// f0
@@ -163,8 +160,10 @@ bool test_func_call(void* arg)
 
 	vm->execn(insts, countof(insts));
 
+	//vm->print_stack(32);
+
 	TEST_CHECK((cast32(vm->_stack[0]) == fid0));
-	TEST_CHECK((cast32(vm->_stack[4]) == 0));
+	TEST_CHECK((cast32(vm->_stack[4]) == 5));
 	TEST_CHECK((cast32(vm->_stack[8]) == 5));
 	TEST_CHECK((vm->_top == 0));
 
@@ -224,6 +223,7 @@ int main(int argc, char** argv)
 	TEST_ADD(test_assign_from_local, &vm);
 	TEST_ADD(test_func_decl, &vm);
 	TEST_ADD(test_func_call, &vm);
+	TEST_ADD(test_int_ptr, &vm);
 
 	TEST_RUN();
 

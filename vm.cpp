@@ -60,10 +60,11 @@ void VM::exec(INST inst)
 		case BC_POP_FUNC:
 		case BC_POP_PTR:
 		{
-			mem8* write = _stack + _top;
-			mem32 val = *ptr32(&_stack[_top]);
-			write32(write, val);
 			_top -= SZ;
+			mem8* read = _stack + _top;
+			mem8* write = _stack + _top + (arg * SZ);
+			mem32 val = *ptr32(read);
+			write32(write, val);
 			break;
 		}
 
@@ -103,6 +104,7 @@ void VM::exec(INST inst)
 			mem32 fid = *ptr32(read);
 			*ptr32(read) = _ip + 1;
 			_ip = _ftable[fid];
+			_top += SZ;
 			break;
 		}
 
@@ -111,7 +113,13 @@ void VM::exec(INST inst)
 			mem8* read = _stack + _top;
 			mem32 retn = *ptr32(read);
 			_ip = retn;
-			_top--;
+			_top -= SZ;
+			break;
+		}
+
+		case BC_BRK:
+		{
+			raise(SIGINT);
 			break;
 		}
 
@@ -148,6 +156,7 @@ const char* VM::bcstr(VM::BC bc)
 		case BC_STORE: return "STORE";
 		case BC_CALL: return "CALL";
 		case BC_RETN: return "RETN";
+		case BC_BRK: return "BRK";
 
 		default:
 			ASSERTN(false);
@@ -174,3 +183,36 @@ int VM::size(VM::TY type)
 void VM::step()
 {
 }
+
+void VM::print_stack(int count)
+{
+	LOG("[VM] Dumping stack (%d bytes, top = %d)...", STACK_SIZE, _top);
+
+	if (count == 0)
+	{
+		count = STACK_SIZE / 4;
+	}
+
+	for (int i = 0; i < count; i += 4)
+	{
+		LOG("[VM] [%4d] %02x %02x %02x %02x (%d)",
+			i,
+			_stack[i + 0],
+			_stack[i + 1],
+			_stack[i + 2],
+			_stack[i + 3],
+			*ptr32(&_stack[i + 0])
+		);
+	}
+
+	LOGN("[VM] Stack dump complete.");
+}
+
+void VM::print_code(int count)
+{
+}
+
+void VM::print_data(int count)
+{
+}
+

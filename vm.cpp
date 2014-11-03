@@ -5,11 +5,19 @@ void VM::init()
 {
 	const int StackSize = 8 KB;
 
-	_stack = (mem8*)malloc(StackSize);
-	memset(_stack, 0, StackSize);
+	_stack = (mem8*)malloc(STACK_SIZE);
+	_code = (INST*)malloc(CODE_SIZE * sizeof(INST));
+	_data = (mem8*)malloc(DATA_SIZE);
+
+	memset(_stack, 0, STACK_SIZE);
+	memset(_code, 0, CODE_SIZE * sizeof(INST));
+	memset(_data, 0, DATA_SIZE);
 	
     _top = 0;
 	_ip = 0;
+
+	_ftable = (int*)malloc(FUNCTION_LIMIT * sizeof(int));
+	memset(_ftable, 0, FUNCTION_LIMIT * sizeof(int));
 
 	_debug_info = (StackDebugInfo*)malloc(sizeof(StackDebugInfo) * StackSize);
 
@@ -74,7 +82,7 @@ void VM::exec(INST inst)
 			mem8* read = _stack + _top + (arg * SZ);
 			mem8* write = _stack + _top;
 			mem32 vptr = *ptr32(read);
-			mem32 val = _memory[vptr];
+			mem32 val = _data[vptr];
 			write32(write, val);
 			break;
 		}
@@ -85,22 +93,25 @@ void VM::exec(INST inst)
 			mem8* write = _stack + _top + (arg * SZ);
 			mem32 val = *ptr32(read);
 			mem32 vptr = *ptr32(write);
-			_memory[vptr] = val;
+			_data[vptr] = val;
 			break;
 		}
 
 		case BC_CALL:
 		{
-			// ptr dst = stack[top];
-			// stack[top] = ip + 1
-			// ip = dst;
+			mem8* read = _stack + _top;
+			mem32 fid = *ptr32(read);
+			*ptr32(read) = _ip + 1;
+			_ip = _ftable[fid];
 			break;
 		}
 
 		case BC_RETN:
 		{
-			// ip = stack[top]
-			// top--;
+			mem8* read = _stack + _top;
+			mem32 retn = *ptr32(read);
+			_ip = retn;
+			_top--;
 			break;
 		}
 

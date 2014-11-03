@@ -15,6 +15,11 @@
 #define MB *1024*1024
 #define GB *1024*1024*1024
 
+#define STACK_SIZE 128 KB
+#define CODE_SIZE 1024 KB
+#define DATA_SIZE 1024 KB
+#define FUNCTION_LIMIT 1024
+
 typedef uint8_t mem8;
 typedef int32_t mem32;
 

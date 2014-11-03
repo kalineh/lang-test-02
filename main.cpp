@@ -19,6 +19,10 @@ bool test_assign_literal(void* arg)
 	TEST_CHECK((vm->_stack[SZ * 0] == 42));
 	TEST_CHECK((vm->_top == 0));
 
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
+
 	return true;
 }
 
@@ -41,6 +45,10 @@ bool test_assign_literal_multi(void* arg)
 	TEST_CHECK((cast32(vm->_stack[SZ * 0]) == 42));
 	TEST_CHECK((cast32(vm->_stack[SZ * 1]) == 100));
 	TEST_CHECK((vm->_top == 0));
+
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
 
 	return true;
 }
@@ -68,6 +76,10 @@ bool test_assign_from_local(void* arg)
 	TEST_CHECK((cast32(vm->_stack[SZ * 1]) == 42));
 	TEST_CHECK((cast32(vm->_stack[SZ * 2]) == 42));
 	TEST_CHECK((vm->_top == 0));
+
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
 
 	return true;
 }
@@ -98,6 +110,10 @@ bool test_func_decl(void* arg)
 
 	TEST_CHECK((vm->_top == 0));
 
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
+
 	return true;
 }
 
@@ -110,6 +126,20 @@ bool test_func_call(void* arg)
 	// x := f(1, 2);
 
 	const int fid0 = 100;
+	const int faddr0 = 22;
+
+	VM::INST f0_insts[] =
+	{
+		MAKE_INST(PUSH_INT, 5),		// retv, retn | 5
+		MAKE_INST(POP_INT, -2),		// 5 retn |
+		MAKE_INST(RETN, 0),			// 5 |
+	};
+
+	VM* vm = (VM*)arg;
+
+	memcpy(vm->_code + faddr0, f0_insts, sizeof(f0_insts));
+
+	vm->_ftable[fid0] = 22;
 
 	VM::INST insts[] =
 	{
@@ -122,16 +152,14 @@ bool test_func_call(void* arg)
 		MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
 
 			// placeholder func instructions
-			MAKE_INST(PUSH_INT, 5),		// f0, 0, retv, retn, 5
-			MAKE_INST(POP_INT, -2),		// f0, 0, retv.5, retn
-			MAKE_INST(RETN, 0),			// f0, 0, retv.5
+			//MAKE_INST(PUSH_INT, 5),		// f0, 0, retv, retn, 5
+			//MAKE_INST(POP_INT, -2),		// f0, 0, retv.5, retn
+			//MAKE_INST(RETN, 0),			// f0, 0, retv.5
 
 		MAKE_INST(POP_INT, -1),			// f0, 5
 		MAKE_INST(POP_INT, 0),			// f0
 		MAKE_INST(POP_FUNC, 0),			// 
 	};
-
-	VM* vm = (VM*)arg;
 
 	vm->execn(insts, countof(insts));
 
@@ -139,6 +167,10 @@ bool test_func_call(void* arg)
 	TEST_CHECK((cast32(vm->_stack[4]) == 0));
 	TEST_CHECK((cast32(vm->_stack[8]) == 5));
 	TEST_CHECK((vm->_top == 0));
+
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
 
 	return true;
 }
@@ -170,6 +202,10 @@ bool test_int_ptr(void* arg)
 	vm->execn(insts, countof(insts));
 
 	TEST_CHECK((vm->_top == 0));
+
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
 
 	return true;
 }

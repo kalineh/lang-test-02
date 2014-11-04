@@ -201,11 +201,10 @@ bool test_func_call_real(void* arg)
 	// x := f();
 
 	const int fid0 = 100;
-	const int faddr0 = 22;
+	const int faddr0 = 256;
 
 	VM::INST f0_insts[] =
 	{
-		MAKE_INST(DUMP_STACK, 0),	
 		MAKE_INST(PUSH_INT, 5),		// retv, retn | 5
 		MAKE_INST(POP_INT, -2),		// 5 retn |
 		MAKE_INST(RETN, 0),			// 5 |
@@ -215,23 +214,22 @@ bool test_func_call_real(void* arg)
 
 	memcpy(vm->_code + faddr0, f0_insts, sizeof(f0_insts));
 
-	vm->_ftable[fid0] = 22;
-	vm->_ip = 0;
-
 	VM::INST insts[] =
 	{
 		MAKE_INST(PUSH_FUNC, fid0),		// f0
 		MAKE_INST(PUSH_INT, 0),			// f0, 0
 
 		MAKE_INST(PUSH_INT, 0),			// f0, 0, retv
-		MAKE_INST(PUSH_FUNC, fid0),		// f0, 0, retv, fid0
-
 		MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
 
-		MAKE_INST(POP_INT, -1),			// f0, 5
+		MAKE_INST(POP_INT, -1),			// f0, 5, retv
 		MAKE_INST(POP_INT, 0),			// f0
 		MAKE_INST(POP_FUNC, 0),			// 
 	};
+
+	vm->_ftable[fid0] = faddr0;
+	vm->_ip = 0;
+	vm->_top = 0;
 
 	memcpy(vm->_code, insts, sizeof(insts));
 	memcpy(vm->_code + faddr0, f0_insts, sizeof(f0_insts));
@@ -239,6 +237,7 @@ bool test_func_call_real(void* arg)
 	vm->run();
 
 	//vm->print_stack(32);
+	//vm->print_code(16);
 
 	TEST_CHECK((cast32(vm->_stack[0]) == fid0));
 	TEST_CHECK((cast32(vm->_stack[4]) == 5));

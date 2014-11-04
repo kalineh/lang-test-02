@@ -63,6 +63,7 @@ struct VM
 
 		// debug info
 		BC_DUMP_STACK,
+		BC_DUMP_CODE,
 	};
 
 	enum TY

@@ -45,7 +45,7 @@ void VM::step()
 
 void VM::exec(INST inst)
 {
-	LOG("[VM] [%04d] %8s: arg: %d", _ip, bcstr(inst.bc), inst.arg);
+	LOG("[VM] [ip:%04d top:%04d] %8s: arg: %d", _ip, _top, bcstr(inst.bc), inst.arg);
 
 	const BC bc = inst.bc;	
 	const mem32 arg = cast32(inst.arg);
@@ -126,8 +126,8 @@ void VM::exec(INST inst)
 		{
 			mem8* read = _stack + _top;
 			mem32 fid = *ptr32(read);
-			*ptr32(read) = _ip + 1;
-			_ip = _ftable[fid];
+			*ptr32(read) = _ip;
+			_ip = _ftable[arg] - 1;
 			_top += SZ;
 			break;
 		}
@@ -136,7 +136,8 @@ void VM::exec(INST inst)
 		{
 			mem8* read = _stack + _top;
 			mem32 retn = *ptr32(read);
-			_ip = retn;
+			// clarify why this is -2
+			_ip = retn - 2;
 			_top -= SZ;
 			break;
 		}
@@ -149,7 +150,13 @@ void VM::exec(INST inst)
 
 		case BC_DUMP_STACK:
 		{
-			print_stack();
+			print_stack(arg);
+			break;
+		}
+
+		case BC_DUMP_CODE:
+		{
+			print_code(arg);
 			break;
 		}
 
@@ -205,6 +212,9 @@ const char* VM::bcstr(VM::BC bc)
 		case BC_RETN: return "RETN";
 		case BC_BRK: return "BRK";
 
+		case BC_DUMP_STACK: return "DUMP_STACK";
+		case BC_DUMP_CODE: return "DUMP_CODE";
+
 		default:
 			ASSERTN(false);
 			return "bad bytecode";
@@ -229,7 +239,7 @@ int VM::size(VM::TY type)
 
 void VM::print_stack(int count)
 {
-	LOG("[VM] Dumping stack (%d bytes, top = %d)...", STACK_SIZE, _top);
+	LOG("[VM] Dumping stack (%d bytes, top = %d, ip = %d)", STACK_SIZE, _top, _ip);
 
 	if (count == 0)
 	{
@@ -238,13 +248,14 @@ void VM::print_stack(int count)
 
 	for (int i = 0; i < count; i += 4)
 	{
-		LOG("[VM] [%4d] %02x %02x %02x %02x (%d)",
+		LOG("[VM] [%4d] %02x %02x %02x %02x (%d)%s",
 			i,
 			_stack[i + 0],
 			_stack[i + 1],
 			_stack[i + 2],
 			_stack[i + 3],
-			*ptr32(&_stack[i + 0])
+			*ptr32(&_stack[i + 0]),
+			(i == _top) ? " <-- top" : ""
 		);
 	}
 
@@ -253,6 +264,22 @@ void VM::print_stack(int count)
 
 void VM::print_code(int count)
 {
+	LOG("[VM] Dumping code (%d bytes, top = %d, ip = %d)", STACK_SIZE, _top, _ip);
+
+	if (count == 0)
+	{
+		count = CODE_SIZE / sizeof(INST);
+	}
+
+	for (int i = 0; i < count; ++i)
+	{
+		LOG("[VM] [%03d] %s : %d%s",
+			i,
+			bcstr(_code[i].bc),
+			_code[i].arg,
+			(i == _ip) ? " <-- ip" : ""
+		);
+	}
 }
 
 void VM::print_data(int count)

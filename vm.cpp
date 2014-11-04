@@ -20,8 +20,10 @@ void VM::init()
 	memset(_ftable, 0, FUNCTION_LIMIT * sizeof(int));
 
 	const int StackDebugInfoSize = sizeof(StackDebugInfo) * STACK_SIZE / SZ;
-	_debug_info = (StackDebugInfo*)malloc(StackDebugInfoSize);
-	memset(_debug_info, 0, StackDebugInfoSize);
+	_stack_debug_info = (StackDebugInfo*)malloc(StackDebugInfoSize);
+	memset(_stack_debug_info, 0, StackDebugInfoSize);
+
+	// fnuc debug info
 
 	LOGN("[VM] initialized");
 }
@@ -29,20 +31,31 @@ void VM::init()
 void VM::release()
 {
 	free(_memblock);
-	free(_debug_info);
+	free(_stack_debug_info);
 
 	LOGN("[VM] released");
 }
 
+void VM::step()
+{
+	INST inst = _code[_ip];
+	exec(inst);
+	_ip++;
+}
+
 void VM::exec(INST inst)
 {
-	LOG("[VM] exec: %8s: arg: %d", bcstr(inst.bc), inst.arg);
+	LOG("[VM] [%04d] %8s: arg: %d", _ip, bcstr(inst.bc), inst.arg);
 
 	const BC bc = inst.bc;	
 	const mem32 arg = cast32(inst.arg);
 
 	switch (bc)
 	{
+		case BC_HALT:
+			LOG("[VM] execution halt at instruction %d", _ip);
+			break;	
+
 		case BC_PUSH_INT:
 		case BC_PUSH_FLOAT:
 		case BC_PUSH_STRING:
@@ -134,6 +147,12 @@ void VM::exec(INST inst)
 			break;
 		}
 
+		case BC_DUMP_STACK:
+		{
+			print_stack();
+			break;
+		}
+
 		default:
 			ASSERTN(false);
 			break;
@@ -155,10 +174,19 @@ void VM::execn(INST* insts, int count)
 	}
 }
 
+void VM::run()
+{
+	while (_code[_ip].bc != BC_HALT)
+	{
+		step();
+	}
+}
+
 const char* VM::bcstr(VM::BC bc)
 {
 	switch (bc)
 	{
+		case BC_HALT: return "HALT";
 		case BC_PUSH_INT: return "PUSH_INT";
 		case BC_PUSH_FLOAT: return "PUSH_FLOAT";
 		case BC_PUSH_STRING: return "PUSH_STRING";
@@ -170,6 +198,7 @@ const char* VM::bcstr(VM::BC bc)
 		case BC_POP_FUNC: return "POP_FUNC";
 		case BC_POP_PTR: return "POP_PTR";
 		case BC_DUP: return "DUP";
+		case BC_ADDR: return "ADDR";
 		case BC_LOAD: return "LOAD";
 		case BC_STORE: return "STORE";
 		case BC_CALL: return "CALL";
@@ -196,10 +225,6 @@ int VM::size(VM::TY type)
 			ASSERTN(false);
 			return SZ;
 	}
-}
-
-void VM::step()
-{
 }
 
 void VM::print_stack(int count)

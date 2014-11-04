@@ -117,26 +117,14 @@ bool test_func_decl(void* arg)
 	return true;
 }
 
-bool test_func_call(void* arg)
+bool test_func_call_fake(void* arg)
 {
 	// f0 := () { return 5; };
 	// x := f();
 
-	const int fid0 = 100;
-	const int faddr0 = 22;
-
-	VM::INST f0_insts[] =
-	{
-		MAKE_INST(PUSH_INT, 5),		// retv, retn | 5
-		MAKE_INST(POP_INT, -2),		// 5 retn |
-		MAKE_INST(RETN, 0),			// 5 |
-	};
+	const int fid0 = 101;
 
 	VM* vm = (VM*)arg;
-
-	memcpy(vm->_code + faddr0, f0_insts, sizeof(f0_insts));
-
-	vm->_ftable[fid0] = 22;
 
 	VM::INST insts[] =
 	{
@@ -146,11 +134,6 @@ bool test_func_call(void* arg)
 		MAKE_INST(PUSH_INT, 0),			// f0, 0, retv
 		MAKE_INST(PUSH_FUNC, fid0),		// f0, 0, retv, fid0
 
-		// will fail until ip handled correctly
-		//MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
-
-			// placeholder func instructions
-			// remove when ip handling
 			MAKE_INST(PUSH_INT, 5),		// f0, 0, retv, retn, 5
 			MAKE_INST(POP_INT, -2),		// f0, 0, retv.5, retn
 			MAKE_INST(RETN, 0),			// f0, 0, retv.5
@@ -212,6 +195,62 @@ bool test_int_ptr(void* arg)
 	return true;
 }
 
+bool test_func_call_real(void* arg)
+{
+	// f0 := () { return 5; };
+	// x := f();
+
+	const int fid0 = 100;
+	const int faddr0 = 22;
+
+	VM::INST f0_insts[] =
+	{
+		MAKE_INST(DUMP_STACK, 0),	
+		MAKE_INST(PUSH_INT, 5),		// retv, retn | 5
+		MAKE_INST(POP_INT, -2),		// 5 retn |
+		MAKE_INST(RETN, 0),			// 5 |
+	};
+
+	VM* vm = (VM*)arg;
+
+	memcpy(vm->_code + faddr0, f0_insts, sizeof(f0_insts));
+
+	vm->_ftable[fid0] = 22;
+	vm->_ip = 0;
+
+	VM::INST insts[] =
+	{
+		MAKE_INST(PUSH_FUNC, fid0),		// f0
+		MAKE_INST(PUSH_INT, 0),			// f0, 0
+
+		MAKE_INST(PUSH_INT, 0),			// f0, 0, retv
+		MAKE_INST(PUSH_FUNC, fid0),		// f0, 0, retv, fid0
+
+		MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
+
+		MAKE_INST(POP_INT, -1),			// f0, 5
+		MAKE_INST(POP_INT, 0),			// f0
+		MAKE_INST(POP_FUNC, 0),			// 
+	};
+
+	memcpy(vm->_code, insts, sizeof(insts));
+	memcpy(vm->_code + faddr0, f0_insts, sizeof(f0_insts));
+
+	vm->run();
+
+	//vm->print_stack(32);
+
+	TEST_CHECK((cast32(vm->_stack[0]) == fid0));
+	TEST_CHECK((cast32(vm->_stack[4]) == 5));
+	TEST_CHECK((cast32(vm->_stack[8]) == 5));
+	TEST_CHECK((vm->_top == 0));
+
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
+
+	return true;
+}
 
 int main(int argc, char** argv)
 {
@@ -225,8 +264,11 @@ int main(int argc, char** argv)
 	TEST_ADD(test_assign_literal_multi, &vm);
 	TEST_ADD(test_assign_from_local, &vm);
 	TEST_ADD(test_func_decl, &vm);
-	TEST_ADD(test_func_call, &vm);
+	TEST_ADD(test_func_call_fake, &vm);
 	TEST_ADD(test_int_ptr, &vm);
+
+	//TEST_ADD(test_ip_simple, &vm);
+	TEST_ADD(test_func_call_real, &vm);
 
 	TEST_RUN();
 

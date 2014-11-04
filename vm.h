@@ -16,6 +16,8 @@ struct VM
 {
 	enum BC
 	{
+		BC_HALT = 0,
+
 		// stack[top] = arg;
 		// top++;
 		BC_PUSH_INT,
@@ -58,6 +60,9 @@ struct VM
 
 		// breakpoint
 		BC_BRK,
+
+		// debug info
+		BC_DUMP_STACK,
 	};
 
 	enum TY
@@ -69,6 +74,17 @@ struct VM
 		TY_PTR,
 	};
 
+	struct INST
+	{
+		BC bc;
+		int32_t arg;
+	};
+
+	struct FRAME
+	{
+		INST* insts;
+	};
+	
 	struct StackDebugInfo
 	{
 		int id;
@@ -83,15 +99,13 @@ struct VM
 		};
 	};
 
-	struct INST
+	struct FunctionDebugInfo
 	{
-		BC bc;
-		int32_t arg;
-	};
-
-	struct FRAME
-	{
+		int fid;
+		int offset;
 		INST* insts;
+		int count;
+		const char* name;
 	};
 
 	mem8* _memblock;
@@ -102,19 +116,23 @@ struct VM
 	int _top;
 	int _ip;
 	int* _ftable;
+	int _fcount;
 
-	StackDebugInfo* _debug_info;
+	StackDebugInfo* _stack_debug_info;
+	FunctionDebugInfo* _function_debug_info;
 
 	void init();
 	void release();
 
+	void step();
 	void exec(INST inst);
+
 	void execn(INST* insts, int count);
+
+	void run();
 
 	const char* bcstr(BC bc);
 	int size(TY type);
-
-	void step();
 
 	void print_stack(int count = 0);
 	void print_code(int count = 0);

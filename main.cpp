@@ -8,8 +8,8 @@ bool test_assign_literal(void* arg)
 	// x := 42;
 	VM::INST insts[] =
 	{
-		MAKE_INST( PUSH_INT, 42 ),		// 42
-		MAKE_INST( POP_INT, 0 ),		// 
+		MAKE_INST(PUSH_INT, 42),	// 42
+		MAKE_INST(POP_INT, 0),		// 
 	};
 
 	VM* vm = (VM*)arg;
@@ -146,9 +146,11 @@ bool test_func_call(void* arg)
 		MAKE_INST(PUSH_INT, 0),			// f0, 0, retv
 		MAKE_INST(PUSH_FUNC, fid0),		// f0, 0, retv, fid0
 
+		// will fail until ip handled correctly
 		//MAKE_INST(CALL, fid0),			// f0, 0, retv, retn
 
 			// placeholder func instructions
+			// remove when ip handling
 			MAKE_INST(PUSH_INT, 5),		// f0, 0, retv, retn, 5
 			MAKE_INST(POP_INT, -2),		// f0, 0, retv.5, retn
 			MAKE_INST(RETN, 0),			// f0, 0, retv.5
@@ -186,14 +188,15 @@ bool test_int_ptr(void* arg)
 	VM::INST insts[] =
 	{
 		MAKE_INST(PUSH_INT, 1),		// 1
-		MAKE_INST(LOAD, -1),		// 1, &x
-		MAKE_INST(DUP, 0),			// 1, &x, &x
-		MAKE_INST(STORE, -2),
-
-		MAKE_INST(PUSH_INT, 2),
-		MAKE_INST(CALL, fid0),
-		MAKE_INST(POP_FUNC, -1),
-		MAKE_INST(POP_INT, -1),
+		MAKE_INST(ADDR, -1),		// 1, &x
+		MAKE_INST(DUP, 0),			// 1, &x, !&x
+		MAKE_INST(LOAD, -2),		// 1, &x, *x
+		MAKE_INST(PUSH_INT, 2),		// 1, &x, *x, 2
+		MAKE_INST(STORE, -3),		// 1, &x, *x, 2
+		MAKE_INST(POP_INT, 0),		// 1, &x, *x
+		MAKE_INST(POP_INT, 0),		// 1, &x
+		MAKE_INST(POP_PTR, 0),		// 1
+		MAKE_INST(POP_INT, 0),		//
 	};
 
 	VM* vm = (VM*)arg;

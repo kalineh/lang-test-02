@@ -38,6 +38,10 @@ struct VM
 
 		// stack[top] = &stack[top + arg];
 		// top++;
+		BC_ADDR,
+
+		// stack[top] = &stack[top + arg];
+		// top++;
 		BC_LOAD,
 
 		// *stack[top + arg] = stack[top];
@@ -90,6 +94,7 @@ struct VM
 		INST* insts;
 	};
 
+	mem8* _memblock;
 	mem8* _stack;
 	INST* _code;
 	mem8* _data;

@@ -3,14 +3,14 @@
 
 void VM::init()
 {
-	const int StackSize = 8 KB;
+	_memblock = (mem8*)malloc(STACK_SIZE + CODE_SIZE + DATA_SIZE);
 
-	_stack = (mem8*)malloc(STACK_SIZE);
-	_code = (INST*)malloc(CODE_SIZE * sizeof(INST));
-	_data = (mem8*)malloc(DATA_SIZE);
+	_stack = (mem8*)_memblock;
+	_code = (INST*)_memblock + STACK_SIZE;
+	_data = (mem8*)_memblock + STACK_SIZE + CODE_SIZE;
 
 	memset(_stack, 0, STACK_SIZE);
-	memset(_code, 0, CODE_SIZE * sizeof(INST));
+	memset(_code, 0, CODE_SIZE);
 	memset(_data, 0, DATA_SIZE);
 	
     _top = 0;
@@ -19,16 +19,16 @@ void VM::init()
 	_ftable = (int*)malloc(FUNCTION_LIMIT * sizeof(int));
 	memset(_ftable, 0, FUNCTION_LIMIT * sizeof(int));
 
-	_debug_info = (StackDebugInfo*)malloc(sizeof(StackDebugInfo) * StackSize);
-
-	memset(_debug_info, 0, sizeof(StackDebugInfo) * StackSize);
+	const int StackDebugInfoSize = sizeof(StackDebugInfo) * STACK_SIZE / SZ;
+	_debug_info = (StackDebugInfo*)malloc(StackDebugInfoSize);
+	memset(_debug_info, 0, StackDebugInfoSize);
 
 	LOGN("[VM] initialized");
 }
 
 void VM::release()
 {
-	free(_stack);
+	free(_memblock);
 	free(_debug_info);
 
 	LOGN("[VM] released");
@@ -60,6 +60,8 @@ void VM::exec(INST inst)
 		case BC_POP_FUNC:
 		case BC_POP_PTR:
 		{
+			// todo: validate same pushed type
+
 			_top -= SZ;
 			mem8* read = _stack + _top;
 			mem8* write = _stack + _top + (arg * SZ);
@@ -78,12 +80,21 @@ void VM::exec(INST inst)
 			break;
 		}
 
+		case BC_ADDR:
+		{
+			mem8* write = _stack + _top;
+			mem32 val = _top + (arg * SZ);
+			write32(write, val);
+			_top += SZ;
+			break;
+		}
+
 		case BC_LOAD:
 		{
 			mem8* read = _stack + _top + (arg * SZ);
 			mem8* write = _stack + _top;
 			mem32 vptr = *ptr32(read);
-			mem32 val = _data[vptr];
+			mem32 val = _memblock[vptr];
 			write32(write, val);
 			break;
 		}
@@ -94,7 +105,7 @@ void VM::exec(INST inst)
 			mem8* write = _stack + _top + (arg * SZ);
 			mem32 val = *ptr32(read);
 			mem32 vptr = *ptr32(write);
-			_data[vptr] = val;
+			_memblock[vptr] = val;
 			break;
 		}
 
@@ -134,6 +145,13 @@ void VM::execn(INST* insts, int count)
 	for (int i = 0; i < count; ++i)
 	{
 		exec(insts[i]);
+
+		ASSERTN((_top & 0x4) == 0);
+		ASSERTN(_top >= 0);
+		ASSERTN(_top < STACK_SIZE);
+
+		ASSERTN(_ip >= 0);
+		ASSERTN(_ip < CODE_SIZE);
 	}
 }
 

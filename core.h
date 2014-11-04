@@ -29,8 +29,8 @@ inline mem32 cast32_wrap(float x) { return *((mem32*)&x); }
 inline mem32 cast32_wrap(char x) { return *((mem32*)&x); } 
 inline mem32 cast32_wrap(void* x) { return *((mem32*)&x); } 
 
-#define ASSERT(cond, format, ...) if (!cond) { printf(format, __VA_ARGS__); assert(false); }
-#define ASSERTN(cond) if (!cond) { assert(false); }
+#define ASSERT(cond, format, ...) if (!(cond)) { printf(format, __VA_ARGS__); assert(false); }
+#define ASSERTN(cond) if (!(cond)) { assert(false); }
 #define LOG(format, ...) printf(format, __VA_ARGS__); printf("\n");
 #define LOGN(format) printf(format ); printf("\n");
 

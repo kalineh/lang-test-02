@@ -126,7 +126,7 @@ void VM::exec(INST inst)
 		{
 			mem8* read = _stack + _top;
 			mem32 fid = *ptr32(read);
-			*ptr32(read) = _ip + 1;
+			*ptr32(read) = _ip;
 			_ip = _ftable[arg] - 1;
 			_top += SZ;
 			break;
@@ -136,8 +136,59 @@ void VM::exec(INST inst)
 		{
 			mem8* read = _stack + _top;
 			mem32 retn = *ptr32(read);
-			_ip = retn - 1;
+			// todo: why is this -2, not -1?
+			_ip = retn - 2;
 			_top -= SZ;
+			break;
+		}
+
+		case BC_ADD_INT:
+		{
+			mem8* lhs = _stack + _top - SZ * 1;
+			mem8* rhs = _stack + _top - SZ * 2;
+			mem8* write = _stack + _top + (arg * SZ);
+			*ptr32(write) = *(int32_t*)lhs + *(int32_t*)rhs;
+			_top -= SZ * 2;
+			break;
+		}
+
+		case BC_SUB_INT:
+		{
+			mem8* lhs = _stack + _top - SZ * 1;
+			mem8* rhs = _stack + _top - SZ * 2;
+			mem8* write = _stack + _top + (arg * SZ);
+			*ptr32(write) = *(int32_t*)lhs - *(int32_t*)rhs;
+			_top -= SZ * 2;
+			break;
+		}
+
+		case BC_MUL_INT:
+		{
+			mem8* lhs = _stack + _top - SZ * 1;
+			mem8* rhs = _stack + _top - SZ * 2;
+			mem8* write = _stack + _top + (arg * SZ);
+			*ptr32(write) = *(int32_t*)lhs * *(int32_t*)rhs;
+			_top -= SZ * 2;
+			break;
+		}
+
+		case BC_DIV_INT:
+		{
+			mem8* lhs = _stack + _top - SZ * 1;
+			mem8* rhs = _stack + _top - SZ * 2;
+			mem8* write = _stack + _top + (arg * SZ);
+			*ptr32(write) = *(int32_t*)lhs / *(int32_t*)rhs;
+			_top -= SZ * 2;
+			break;
+		}
+
+		case BC_MOD_INT:
+		{
+			mem8* lhs = _stack + _top - SZ * 1;
+			mem8* rhs = _stack + _top - SZ * 2;
+			mem8* write = _stack + _top + (arg * SZ);
+			*ptr32(write) = *(int32_t*)lhs % *(int32_t*)rhs;
+			_top -= SZ * 2;
 			break;
 		}
 
@@ -209,6 +260,11 @@ const char* VM::bcstr(VM::BC bc)
 		case BC_STORE: return "STORE";
 		case BC_CALL: return "CALL";
 		case BC_RETN: return "RETN";
+		case BC_ADD_INT: return "ADD_INT";
+		case BC_SUB_INT: return "SUB_INT";
+		case BC_MUL_INT: return "MUL_INT";
+		case BC_DIV_INT: return "DIV_INT";
+		case BC_MOD_INT: return "MOD_INT";
 		case BC_BRK: return "BRK";
 
 		case BC_DUMP_STACK: return "DUMP_STACK";

@@ -20,8 +20,7 @@ struct Test
 	g_test_count++;
 #define TEST_CHECK(cond) \
 	if (!cond) { \
-		TEST_LOGN("[TEST] failure:"); \
-		TEST_LOGN("[TEST] " #cond); \
+		TEST_LOGN("[TEST] failure: " #cond); \
 		return false; \
 	}
 

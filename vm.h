@@ -58,6 +58,24 @@ struct VM
 		// top--;
 		BC_RETN,
 
+		// stack[top + arg] = stack[top - 1] + stack[top - 2]
+		// top--;
+		// top--;
+		BC_ADD_INT,
+		BC_SUB_INT,
+		BC_MUL_INT,
+		BC_DIV_INT,
+		BC_MOD_INT,
+
+		// stack[top + arg] = stack[top - 1] + stack[top - 2]
+		// top--;
+		// top--;
+		BC_ADD_FLOAT,
+		BC_SUB_FLOAT,
+		BC_MUL_FLOAT,
+		BC_DIV_FLOAT,
+		BC_MOD_FLOAT,
+
 		// breakpoint
 		BC_BRK,
 

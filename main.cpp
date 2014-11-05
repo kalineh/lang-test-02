@@ -195,6 +195,40 @@ bool test_int_ptr(void* arg)
 	return true;
 }
 
+bool test_arithmetic(void* arg)
+{
+	// x := 1 + 2
+	// y := x + x
+
+	VM::INST insts[] =
+	{
+		MAKE_INST(PUSH_INT, 0),		// x
+		MAKE_INST(PUSH_INT, 1),		// x, 1
+		MAKE_INST(PUSH_INT, 2),		// x, 1, 2
+		MAKE_INST(ADD_INT, -3),		// 3
+		MAKE_INST(PUSH_INT, 0),		// 3, y
+		MAKE_INST(DUP, -2),			// 3, y, 3
+		MAKE_INST(DUP, -3),			// 3, y, 3, 3
+		MAKE_INST(ADD_INT, -3),		// 3, 6
+		MAKE_INST(POP_INT, 0),		// 3
+		MAKE_INST(POP_INT, 0),		// 
+	};
+
+	VM* vm = (VM*)arg;
+
+	vm->execn(insts, countof(insts));
+
+	TEST_CHECK((vm->_top == 0));
+	TEST_CHECK((vm->_stack[0] == 3));
+	TEST_CHECK((vm->_stack[4] == 6));
+
+	memset(vm->_stack, 0, STACK_SIZE);
+	memset(vm->_code, 0, CODE_SIZE);
+	memset(vm->_data, 0, DATA_SIZE);
+
+	return true;
+}
+
 bool test_func_call_real(void* arg)
 {
 	// f0 := () { return 5; };
@@ -239,10 +273,10 @@ bool test_func_call_real(void* arg)
 	//vm->print_stack(32);
 	//vm->print_code(16);
 
+	TEST_CHECK((vm->_top == 0));
 	TEST_CHECK((cast32(vm->_stack[0]) == fid0));
 	TEST_CHECK((cast32(vm->_stack[4]) == 5));
 	TEST_CHECK((cast32(vm->_stack[8]) == 5));
-	TEST_CHECK((vm->_top == 0));
 
 	memset(vm->_stack, 0, STACK_SIZE);
 	memset(vm->_code, 0, CODE_SIZE);
@@ -265,6 +299,7 @@ int main(int argc, char** argv)
 	TEST_ADD(test_func_decl, &vm);
 	TEST_ADD(test_func_call_fake, &vm);
 	TEST_ADD(test_int_ptr, &vm);
+	TEST_ADD(test_arithmetic, &vm);
 
 	//TEST_ADD(test_ip_simple, &vm);
 	TEST_ADD(test_func_call_real, &vm);
@@ -278,4 +313,44 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+#include <iostream>
+#include "node.h"
+#include "codegen.h"
 
+extern int yyparse();
+extern void yyparse_init(const char*);
+extern void yyparse_cleanup();
+
+extern NBlock* programBlock;
+
+void createCoreFunctions(CodeGenContext& context) {}
+
+int main(int argc, char** argv)
+{
+        if (argc <= 1)
+        {
+                std::cout << "error: no input files" << std::endl;
+                return -1;
+        }
+
+        for (int i = 1; i < argc; ++i)
+        {
+                std::cout << "Compiling file " << argv[i] << std::endl;
+
+                yyparse_init( argv[ 1 ] );
+                yyparse();
+                yyparse_cleanup();
+        }
+
+        std::cout << "Compilation complete: " << programBlock << std::endl;
+
+        InitializeNativeTarget();
+        CodeGenContext context;
+        createCoreFunctions(context);
+        context.generateCode(*programBlock);
+        context.runCode();
+
+        return 0;
+}
+~                                                                                                                                                                         
+~                   

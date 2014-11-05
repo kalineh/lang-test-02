@@ -31,5 +31,5 @@
 *.sublime-workspace
 
 # Generated parser headers
-parser.cpp
-parser.hpp
+*.gen.*
+

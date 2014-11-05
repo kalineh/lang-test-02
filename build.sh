@@ -1,8 +1,8 @@
 
 #!/bin/bash
 
-bison -d -o parser.cpp parser.y
-lex -o tokens.cpp tokens.l
+bison -d -o parser.gen.cpp parser.y
+lex -o tokens.gen.cpp tokens.l
 
 	#-lstdc++ -lm -ltinfo -ldl -lpthread \
 clang *.cpp \

@@ -29,3 +29,7 @@
 
 # Sublime workspace
 *.sublime-workspace
+
+# Generated parser headers
+parser.cpp
+parser.hpp

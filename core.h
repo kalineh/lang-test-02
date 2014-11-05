@@ -24,6 +24,19 @@
 typedef uint8_t mem8;
 typedef int32_t mem32;
 
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+
+typedef int8_t s8;
+typedef int16_t s16;
+typedef int32_t s32;
+typedef int64_t s64;
+
+typedef float f32;
+typedef double f64;
+
 inline mem32 cast32_wrap(int x) { return *((mem32*)&x); } 
 inline mem32 cast32_wrap(float x) { return *((mem32*)&x); } 
 inline mem32 cast32_wrap(char x) { return *((mem32*)&x); } 

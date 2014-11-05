@@ -1,4 +1,5 @@
 
+/*
 #include <iostream>
 #include <vector>
 #include <llvm/IR/Value.h>
@@ -15,23 +16,25 @@ typedef std::vector<NVariableDeclaration*> VariableList;
 
 class Node
 {
-	public:
-		virtual ~Node() { }
-		virtual llvm::Value* codeGen(CodeGenContext& context) { return (llvm::Value*)0; }
+public:
+	virtual ~Node() { }
+	virtual llvm::Value* codeGen(CodeGenContext& context) { return (llvm::Value*)0; }
 };
 
-class NExpression : public Node
+class NExpression
+	: public Node
 {
 };
 
-class NStatement : public Node
+class NStatement
+	: public Node
 {
 };
 
 class NInteger : public NExpression
 {
-	public:
-		long long value;
+public:
+	long long value;
 
 		NInteger(long long value)
 			: value(value)
@@ -176,3 +179,4 @@ class NFunctionDeclaration : public NStatement
 		virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
+*/

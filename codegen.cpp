@@ -1,4 +1,5 @@
 
+/*
 #include "node.h"
 #include "codegen.h"
 #include "parser.hpp"
@@ -231,3 +232,5 @@ llvm::Value* NFunctionDeclaration::codeGen(CodeGenContext& context)
 
 	return function;
 }
+
+*/

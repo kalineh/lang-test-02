@@ -126,7 +126,7 @@ void VM::exec(INST inst)
 		{
 			mem8* read = _stack + _top;
 			mem32 fid = *ptr32(read);
-			*ptr32(read) = _ip;
+			*ptr32(read) = _ip + 1;
 			_ip = _ftable[arg] - 1;
 			_top += SZ;
 			break;
@@ -136,8 +136,7 @@ void VM::exec(INST inst)
 		{
 			mem8* read = _stack + _top;
 			mem32 retn = *ptr32(read);
-			// clarify why this is -2
-			_ip = retn - 2;
+			_ip = retn - 1;
 			_top -= SZ;
 			break;
 		}

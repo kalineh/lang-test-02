@@ -30,8 +30,5 @@
 # Sublime workspace
 *.sublime-workspace
 
-# Generated parser headers
-*.gen.*
-
 # Generated output files
 out/*

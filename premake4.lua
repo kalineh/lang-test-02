@@ -2,7 +2,7 @@
 solution "kl"
    configurations { "Debug", "Release", }
 
-   location "out"
+   location "out/"
  
    project "kl"
       kind "ConsoleApp"
@@ -29,10 +29,10 @@ solution "kl"
       {
         -- "/FI\"core.h\"",
         -- "/FI\"PCH.h\"",
-        "/MP2",
+        -- "/MP2",
       }
 
-      debugdir "."
+      debugdir "out"
       debugargs { }
       debugenvs { }
 

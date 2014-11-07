@@ -33,3 +33,5 @@
 # Generated parser headers
 *.gen.*
 
+# Generated output files
+out/*

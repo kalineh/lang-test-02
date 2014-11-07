@@ -10,20 +10,42 @@
 	"build_systems":
 	[
 		{
-			"name": "build.sh",
-			"cmd": 
-			[
-				"./build.sh",
-			],
-			"shell": true,
+			"name": "Build",
+            "cmd": [ "./build.sh", ],
+            "working_dir": "${project_path:${folder}}",
+            "shell": true,
 
-			"variants": 
+            "windows":
+            {
+			    "cmd": [
+				    "msbuild",
+				    "/target:Build",
+				    "/verbosity:minimal",
+				    "/p:Configuration=Debug;Platform=Win32",
+				    "/m",
+				    "${project_path:${folder}}\\out\\kl.sln"
+				],
+		        "path": "%PATH%;%WINDIR%\\Microsoft.NET\\Framework\\v4.0.30319;%WINDIR%\\Microsoft.NET\\Framework\\v3.5;%WINDIR%\\Microsoft.NET\\Framework\\v2.0.50727",
+	        },
+
+			"variants":
 			[
 				{
-					"cmd": [ "./a.out" ],
 					"name": "Run",
-				}
-			],
+					"cmd": [ "a.out", ],
+					"shell": true,
+					"windows": { "cmd": [ "out\\kl.exe", ] },
+				},
+				{
+					"name": "PremakeGenerate",
+		            "cmd": [ "${project_path:${folder}}\\premake4.exe", "makefile", ],
+		            "working_dir": "${project_path:${folder}}",
+		            "shell": true,
+		            "windows": { "cmd": [ "${project_path:${folder}}\\premake4.exe", "vs2012", ], }
+		        },
+		        {
+			    }
+			]
 		}
 	]
 }

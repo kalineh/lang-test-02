@@ -285,8 +285,26 @@ bool test_func_call_real(void* arg)
 	return true;
 }
 
+#include <iostream>
+#include <fstream>
+#include "lexer.h"
+
 int main(int argc, char** argv)
 {
+	auto in = std::ifstream("test.kl", std::ios::in | std::ios::binary);
+	auto input = std::string(
+		std::istreambuf_iterator<char>(in),
+		std::istreambuf_iterator<char>()
+	);
+
+	std::cout << input << std::endl;
+
+	auto lexer = Lexer(input.c_str());
+
+	lexer.Print();
+
+	return -1;
+
 	VM vm;
 
 	vm.init();

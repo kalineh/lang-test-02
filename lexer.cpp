@@ -122,6 +122,14 @@ bool Lexer::NextToken()
 	case ':': return Add(Token::Colon);
 	case '\t': return Add(Token::Tab);
 	case '\n': return Add(Token::NewLine);
+	case '\r':
+	{
+		if (Peek() == ('\n'))
+		{
+			Next();
+		}
+		return Add(Token::NewLine);
+	}
 	case ' ': return Add(Token::Whitespace, Gather(IsSpaceChar));
 	case '@': return Add(Token::Lookup);
 	case '\'': return LexAlpha();

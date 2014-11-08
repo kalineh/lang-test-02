@@ -32,7 +32,7 @@ solution "kl"
         -- "/MP2",
       }
 
-      debugdir "out"
+      -- debugdir ".."
       debugargs { }
       debugenvs { }
 

@@ -34,7 +34,7 @@
 					"name": "Run",
 					"cmd": [ "a.out", ],
 					"shell": true,
-					"windows": { "cmd": [ "out\\kl.exe", ] },
+					"windows": { "cmd": [ "kl.debug.exe", ] },
 				},
 				{
 					"name": "PremakeGenerate",

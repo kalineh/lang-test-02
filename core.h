@@ -1,6 +1,5 @@
 
-#ifndef _CORE_H
-#define _CORE_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +8,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <signal.h>
+#include <stdarg.h>
 
 #define SZ 4
 
@@ -60,5 +60,3 @@ inline mem8* dec32(mem8* p) { return ofs32(p, -1); }
 
 #include "test.h"
 #include "vm.h"
-
-#endif

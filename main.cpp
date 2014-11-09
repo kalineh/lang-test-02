@@ -302,7 +302,7 @@ int main(int argc, char** argv)
 	auto lexer = std::make_shared<Lexer>(input.c_str());
 	auto parser = std::make_shared<Parser>(lexer);
 
-	lexer->Print();
+	//lexer->Print();
 	parser->Print();
 
 	return 0;

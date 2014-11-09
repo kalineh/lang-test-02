@@ -1,100 +1,85 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+#pragma once
 
-/* Bison interface for Yacc-like parsers in C
+#include "core.h"
+#include "lexer.h"
+#include "node.h"
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+#include <memory>
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
-
-/* As a special exception, you may create a larger work that contains
-   part or all of the Bison parser skeleton and distribute that work
-   under terms of your choice, so long as that work isn't itself a
-   parser generator using the skeleton or a modified version thereof
-   as a parser skeleton.  Alternatively, if you modify or redistribute
-   the parser skeleton itself, you may (at your option) remove this
-   special exception, which will cause the skeleton and the resulting
-   Bison output files to be licensed under the GNU General Public
-   License without this special exception.
-
-   This special exception was added by the Free Software Foundation in
-   version 2.2 of Bison.  */
-
-#ifndef YY_YY_PARSER_HPP_INCLUDED
-# define YY_YY_PARSER_HPP_INCLUDED
-/* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int yydebug;
-#endif
-
-/* Token type.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
-    TIDENTIFIER = 258,
-    TINTEGER = 259,
-    TDOUBLE = 260,
-    TCEQ = 261,
-    TCNE = 262,
-    TCLT = 263,
-    TCLE = 264,
-    TCGT = 265,
-    TCGE = 266,
-    TEQUAL = 267,
-    TLPAREN = 268,
-    TRPAREN = 269,
-    TLBRACE = 270,
-    TRBRACE = 271,
-    TCOMMA = 272,
-    TDOT = 273,
-    TPLUS = 274,
-    TMINUS = 275,
-    TMUL = 276,
-    TDIV = 277
-  };
-#endif
-
-/* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
-union YYSTYPE
+// iterate over a stream of tokens to produce an abstract syntax tree
+struct Parser : Process
 {
-#line 16 "parser.y" /* yacc.c:1909  */
+	typedef std::shared_ptr<Node> NodePtr;
 
-	Node* node;
-	NBlock* block;
-	NExpression* expr;
-	NStatement* stmt;
-	NIdentifier* ident;
-	NVariableDeclaration* var_decl;
-	std::vector<NVariableDeclaration*>* varvec;
-	std::vector<NExpression*>* exprvec;
-	std::string* string;
-	int token;
+	// what type of thing to parse
+	enum Structure
+	{
+		ParseStatement, ParseExpression, ParseFunction, ParseProgram,
+	};
 
-#line 90 "parser.hpp" /* yacc.c:1909  */
+	Parser(std::shared_ptr<Lexer> lexer, Structure st = ParseProgram);
+
+	void Print();
+
+	bool Passed() const { return passed;  }
+	const std::string &GetError() const { return error; }
+
+private:
+	std::vector<Token> tokens;
+	std::vector<NodePtr> stack;
+	int current;
+	NodePtr root;
+	bool passed;
+	std::string error;
+
+private:
+	void Run(Structure st);
+	void Push(NodePtr node);
+	NodePtr Pop();
+
+	bool Program();
+	bool Statement(NodePtr );
+	bool Expression();
+
+	bool Logical();
+	bool Relational();
+	bool Additive();
+	bool Term();
+	bool Factor();
+
+	bool PushConsume();
+
+	Token const &Next();
+	Token const &Last();
+	Token const &Current() const;
+	Token const &Peek() const;
+	bool PeekIs(Token::Type ty) const;
+	Token const &Consume();
+	int indent;
+
+	bool Try(Token::Type type);
+	NodePtr Expect(Token::Type type);
+
+	std::string Lead(int level);
+	void Print(Node const &node, int level);
+	void Block(NodePtr block);
+	bool ParseFactorIdent();
+
+	void ParseGetMember();
+
+	void ParseMethodCall();
+	void Function(NodePtr);
+
+	void AddBlock(NodePtr fun);
+
+	NodePtr NewNode(Node::Type t);
+	NodePtr NewNode(Token const &);
+	
+	void IfCondition(NodePtr block);
+	void ParseIndexOp();
+	void Assignment(NodePtr);
+	void For(NodePtr block);
+	void While(NodePtr block);
+	bool CreateError(const char *text);
+	void ConsumeNewLines();
 };
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
-#endif
-
-
-extern YYSTYPE yylval;
-
-int yyparse (void);
-
-#endif /* !YY_YY_PARSER_HPP_INCLUDED  */

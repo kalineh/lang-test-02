@@ -287,23 +287,25 @@ bool test_func_call_real(void* arg)
 
 #include <iostream>
 #include <fstream>
+#include <memory>
 #include "lexer.h"
+#include "parser.h"
 
 int main(int argc, char** argv)
 {
-	auto in = std::ifstream("test.kl", std::ios::in | std::ios::binary);
+	auto in = std::ifstream("../test.kl", std::ios::in | std::ios::binary);
 	auto input = std::string(
 		std::istreambuf_iterator<char>(in),
 		std::istreambuf_iterator<char>()
 	);
 
-	std::cout << input << std::endl;
+	auto lexer = std::make_shared<Lexer>(input.c_str());
+	auto parser = std::make_shared<Parser>(lexer);
 
-	auto lexer = Lexer(input.c_str());
+	lexer->Print();
+	parser->Print();
 
-	lexer.Print();
-
-	return -1;
+	return 0;
 
 	VM vm;
 

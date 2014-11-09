@@ -221,7 +221,7 @@ bool Lexer::NextToken()
 	{
 		if (Peek() == '=')
 		{
-			return AddTwoCharOp(Token::GreaterEqiv);
+			return AddTwoCharOp(Token::GreaterEquiv);
 		}
 		return Add(Token::Greater);
 	}
@@ -231,7 +231,7 @@ bool Lexer::NextToken()
 	return false;
 }
 
-std::string Lexer::CreateError(Token tok, const char *fmt, ...)
+std::string Lexer::CreateErrorMessage(Token tok, const char *fmt, ...)
 {
 	char buff0[2000];
 	va_list ap;
@@ -388,5 +388,5 @@ bool Lexer::LexString()
 
 void Lexer::LexError(const char *text)
 {
-	Fail(CreateError(Token(Token::None, *this, lineNumber, Slice(offset, offset)), text, Current()));
+	Fail(CreateErrorMessage(Token(Token::None, *this, lineNumber, Slice(offset, offset)), text, Current()));
 }

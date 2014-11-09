@@ -34,7 +34,8 @@
 					"name": "Run",
 					"cmd": [ "a.out", ],
 					"shell": true,
-					"windows": { "cmd": [ "kl.debug.exe", ] },
+					"windows": { "cmd": [ "..\\kl.debug.exe", ] },
+					"working_dir": "${project_path:${folder}}/out",
 				},
 				{
 					"name": "PremakeGenerate",

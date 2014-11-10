@@ -267,39 +267,45 @@ Pointer<Continuation> Translator::Top()
 
 void Translator::PushNew()
 {
-	Pointer<Continuation> c = reg.New<Continuation>();
-	c->SetCode(reg.New<Array>());
-	stack.push_back(c);
+	auto block = std::make_shared<VirtualInstructionBlock>();
+
+	instructions.push_back(block);
 }
 
-void Translator::Append(Object ob)
+void Translator::Append(VirtualInstructionPtr instruction)
 {
-	Top()->GetCode()->Append(ob);
+	// TODO: should be stack push?
+	instructions.push_back(instruction);
 }
 
-Pointer<Continuation> Translator::Pop()
+VirtualInstructionPtr Translator::Pop()
 {
+	// TODO: pop from stack?
 	auto top = Top();
-	stack.pop_back();
+	instructions.pop_back();
 	return top;
 }
 
 std::string Translator::Result() const
 {
-	StringStream str;
-	for (auto ob : *stack.back()->GetCode())
-		str << ' ' << ob;
+	// TODO: translate viptr to str
+	//StringStream str;
+	//for (auto ob : *stack.back()->GetCode())
+		//str << ' ' << ob;
+	//return str.ToString().c_str();
 
-	return str.ToString().c_str();
+	return "NYI";
 }
 
 void Translator::AppendNewOp(Operation::Type op)
 {
-	AppendNew<Operation>(Operation(op));
+	AppendNew<VirtualInstructionOperation>(op);
 }
 
 void Translator::TranslateIf(Parser::NodePtr node)
 {
+	// TODO: continue from here
+	
 	Node::ChildrenType const &ch = node->Children;
 	bool hasElse = ch.size() > 2;
 	Translate(ch[0]);

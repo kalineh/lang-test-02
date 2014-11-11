@@ -308,7 +308,12 @@ int main(int argc, char** argv)
 
 	//lexer->Print();
 	//parser->Print();
-	translator->Print();
+	//translator->Print();
+
+	WriterText writer;
+
+	for (auto it : translator->ResultInstructions())
+		writer.Write(it);
 
 	return 0;
 

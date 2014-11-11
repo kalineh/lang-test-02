@@ -8,10 +8,7 @@
 #include <vector>
 #include <memory>
 
-// virtual types
-
-// operation
-// literal
+#include "operation.h"
 
 struct VirtualInstruction
 {
@@ -23,30 +20,48 @@ typedef std::vector<VirtualInstructionPtr> VirtualInstructionList;
 struct VirtualInstructionOperation
 	: VirtualInstruction
 {
+	VirtualInstructionOperation() { } 
+	VirtualInstructionOperation(const Operation& value) : value(value) { }
+	VirtualInstructionOperation(Operation::Type value) : value(value) { }
+
 	Operation value;
 };
 
 struct VirtualInstructionLiteralInteger
 	: VirtualInstruction
 {
+	VirtualInstructionLiteralInteger() { } 
+	VirtualInstructionLiteralInteger(int value) : value(value) { }
+
 	int value;
 };
 
 struct VirtualInstructionLiteralFloat
 	: VirtualInstruction
 {
+	VirtualInstructionLiteralFloat() { } 
+	VirtualInstructionLiteralFloat(float value) : value(value) { }
+
 	float value;
 };
 
 struct VirtualInstructionLiteralString
 	: VirtualInstruction
 {
+	VirtualInstructionLiteralString() { } 
+	VirtualInstructionLiteralString(const char* value) : value(value) { }
+	VirtualInstructionLiteralString(const std::string& value) : value(value) { }
+
 	std::string value;
 };
 
 struct VirtualInstructionLiteralIdentifier
 	: VirtualInstruction
 {
+	VirtualInstructionLiteralIdentifier() { } 
+	VirtualInstructionLiteralIdentifier(const char* value) : value(value) { }
+	VirtualInstructionLiteralIdentifier(const std::string& value) : value(value) { }
+
 	std::string value;
 };
 
@@ -146,5 +161,3 @@ private:
 	void TranslateFor(Parser::NodePtr node);
 	void TranslateWhile(Parser::NodePtr node);
 };
-
-KAI_END

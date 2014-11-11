@@ -25,6 +25,8 @@ struct Parser : Process
 	const std::string &GetError() const { return error; }
 
 private:
+	friend struct Translator;
+
 	std::vector<Token> tokens;
 	std::vector<NodePtr> stack;
 	int current;

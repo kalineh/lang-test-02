@@ -1,4 +1,8 @@
 
+#include "core.h"
+
+#include "operation.h"
+
 const char *Operation::ToString(int value)
 {
 	switch (value)

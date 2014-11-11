@@ -1,11 +1,11 @@
 #include "core.h"
 #include "translator.h"
+#include "parser.h"
 
-#include <boost/lexical_cast.hpp>
+//#include <boost/lexical_cast.hpp>
 //#include <boost/range/adaptor/reversed.hpp>
 
-Translator::Translator(std::shared_ptr<Parser> p, Registry &r) 
-	: reg(r)
+Translator::Translator(std::shared_ptr<Parser> p)
 {
 	if (p->Failed)
 		return;
@@ -108,26 +108,30 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 		return;
 
 	case Token::Int:
-		Append(reg.New<int>(boost::lexical_cast<int>(node->token.Text())));
+		// TODO: lexical cast
+		//Append(reg.New<int>(boost::lexical_cast<int>(node->token.Text())));
+		//AppendNew<VirtualInstructionLiteralInt>(node->token.Text());
 		return;
 
 	case Token::Float:
-		Append(reg.New<float>(boost::lexical_cast<float>(node->token.Text())));
+		// TODO: lexical cast
+		//Append(reg.New<float>(boost::lexical_cast<float>(node->token.Text())));
+		//AppendNew<VirtualInstructionLiteralFloat>(node->token.Text());
 		return;
 
 	case Token::String:
-		Append(reg.New<String>(node->token.Text()));
+		AppendNew<VirtualInstructionLiteralString>(node->token.Text());
 		return;
 
 	case Token::Ident:
-		Append(reg.New<Label>(Label(node->token.Text())));
+		AppendNew<VirtualInstructionLiteralIdentifier>(node->token.Text());
 		return;
 
 	case Token::Yield:
 		//for (auto ch : node->Children)
 		//	Translate(ch);
 		//AppendNewOp(Operation::PushContext);
-		KAI_NOT_IMPLEMENTED();
+		//KAI_NOT_IMPLEMENTED();
 		return;
 
 	case Token::Return:
@@ -146,7 +150,7 @@ void Translator::TranslateBinaryOp(Parser::NodePtr node, Operation::Type op)
 	Translate(node->Children[0]);
 	Translate(node->Children[1]);
 
-	AppendNew<Operation>(Operation(op));
+	AppendNewOp(op);
 }
 
 void Translator::Translate(Parser::NodePtr node)
@@ -175,7 +179,7 @@ void Translator::Translate(Parser::NodePtr node)
 		// like a binary op, but argument order is reversed
 		Translate(node->Children[1]);
 		Translate(node->Children[0]);
-		AppendNew<Operation>(Operation(Operation::Store));
+		AppendNewOp(Operation::Store);
 		return;
 
 	case Node::Call:
@@ -194,10 +198,11 @@ void Translator::Translate(Parser::NodePtr node)
 		return;
 
 	case Node::List:
-		for (auto ch : boost::adaptors::reverse(node->Children))
-			Translate(ch);
-		AppendNew<int>(node->Children.size());
-		AppendNewOp(Operation::ToArray);
+		// TODO: reverse
+		//for (auto ch : boost::adaptors::reverse(node->Children))
+			//Translate(ch);
+		//AppendNew<int>(node->Children.size());
+		//AppendNewOp(Operation::ToArray);
 		return;
 
 	case Node::For:
@@ -237,13 +242,15 @@ void Translator::TranslateFunction(NodePtr node)
 		Translate(b);
 
 	// add the args
-	auto cont = Pop();
 	for (auto a : ch[1]->Children)
-		cont->AddArg(Label(a->token.Text()));
+		AppendNew<VirtualInstructionLiteralIdentifier>(a->token.Text());
 
 	// write the name and store
-	Append(cont);
-	AppendNew(Label(ch[0]->token.Text()));
+	//AppendNew(Label(ch[0]->token.Text()));
+	AppendNew<VirtualInstructionLiteralIdentifier>(ch[0]->token.Text());
+
+	// TODO: probably dont need a store for us, since we arent 
+	//       really translating a function as a value
 	AppendNewOp(Operation::Store);
 }
 
@@ -255,14 +262,16 @@ void Translator::TranslateCall(NodePtr node)
 
 	Translate(children[0]);
 	if (children.size() > 2 && children[2]->token.type == Token::Replace)
-		AppendNew(Operation(Operation::Replace));
+		AppendNewOp(Operation::Replace);
 	else
-		AppendNew(Operation(Operation::SuspendNew));
+		AppendNewOp(Operation::SuspendNew);
 }
 
-Pointer<Continuation> Translator::Top()
+VirtualInstructionPtr Translator::Top()
 {
-	return stack.back();
+	// TODO: do we need a stack?
+	//return stack.back();
+	return instructions.back();
 }
 
 void Translator::PushNew()
@@ -304,8 +313,6 @@ void Translator::AppendNewOp(Operation::Type op)
 
 void Translator::TranslateIf(Parser::NodePtr node)
 {
-	// TODO: continue from here
-	
 	Node::ChildrenType const &ch = node->Children;
 	bool hasElse = ch.size() > 2;
 	Translate(ch[0]);

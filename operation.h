@@ -2,6 +2,7 @@
 #pragma once
 
 #include "core.h"
+#include "operation.h"
 
 /// An Operation represents an action to be taken by and Executor
 struct Operation

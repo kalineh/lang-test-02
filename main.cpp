@@ -290,6 +290,7 @@ bool test_func_call_real(void* arg)
 #include <memory>
 #include "lexer.h"
 #include "parser.h"
+#include "translator.h"
 
 int main(int argc, char** argv)
 {
@@ -299,8 +300,11 @@ int main(int argc, char** argv)
 		std::istreambuf_iterator<char>()
 	);
 
+	in.close();
+
 	auto lexer = std::make_shared<Lexer>(input.c_str());
 	auto parser = std::make_shared<Parser>(lexer);
+	auto translator = std::make_shared<Translator>(parser);
 
 	//lexer->Print();
 	parser->Print();

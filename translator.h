@@ -5,6 +5,7 @@
 
 #include <string>
 #include <strstream>
+#include <iostream>
 #include <vector>
 #include <memory>
 
@@ -12,6 +13,8 @@
 
 struct VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstruction"; }
+	virtual std::string ToString() { return std::string("<nul>"); } 
 };
 
 typedef std::shared_ptr<VirtualInstruction> VirtualInstructionPtr;
@@ -24,6 +27,9 @@ struct VirtualInstructionOperation
 	VirtualInstructionOperation(const Operation& value) : value(value) { }
 	VirtualInstructionOperation(Operation::Type value) : value(value) { }
 
+	virtual const char* DebugType() { return "VirtualInstructionOperation"; }
+	virtual std::string ToString() { return std::string(value.ToString()); }
+
 	Operation value;
 };
 
@@ -33,6 +39,9 @@ struct VirtualInstructionLiteralInteger
 	VirtualInstructionLiteralInteger() { } 
 	VirtualInstructionLiteralInteger(int value) : value(value) { }
 
+	virtual const char* DebugType() { return "VirtualInstructionLiteralInteger"; }
+	virtual std::string ToString() { return slow_lexical_cast<std::string>(value); }
+
 	int value;
 };
 
@@ -41,6 +50,9 @@ struct VirtualInstructionLiteralFloat
 {
 	VirtualInstructionLiteralFloat() { } 
 	VirtualInstructionLiteralFloat(float value) : value(value) { }
+
+	virtual const char* DebugType() { return "VirtualInstructionLiteralFloat"; }
+	virtual std::string ToString() { return slow_lexical_cast<std::string>(value); }
 
 	float value;
 };
@@ -52,6 +64,9 @@ struct VirtualInstructionLiteralString
 	VirtualInstructionLiteralString(const char* value) : value(value) { }
 	VirtualInstructionLiteralString(const std::string& value) : value(value) { }
 
+	virtual const char* DebugType() { return "VirtualInstructionLiteralString"; }
+	virtual std::string ToString() { return value; }
+
 	std::string value;
 };
 
@@ -62,25 +77,38 @@ struct VirtualInstructionLiteralIdentifier
 	VirtualInstructionLiteralIdentifier(const char* value) : value(value) { }
 	VirtualInstructionLiteralIdentifier(const std::string& value) : value(value) { }
 
+	virtual const char* DebugType() { return "VirtualInstructionLiteralIdentifier"; }
+	virtual std::string ToString() { return value; }
+
 	std::string value;
 };
 
 struct VirtualInstructionBlock
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionBlock"; }
+	virtual std::string ToString() { return "block"; }
+
 	VirtualInstructionList value;
 };
 
 struct VirtualInstructionFunction
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionFunction"; }
+	virtual std::string ToString() { return "function"; }
+
 	VirtualInstructionPtr identifier;
-	
+	// TODO: args
+	// TODO: block
 };
 
 struct VirtualInstructionCall
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionCall"; }
+	virtual std::string ToString() { return "call"; }
+
 	VirtualInstructionPtr identifier;
 	VirtualInstructionList args;
 };
@@ -88,6 +116,9 @@ struct VirtualInstructionCall
 struct VirtualInstructionStore
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionStore"; }
+	virtual std::string ToString() { return "store"; }
+
 	VirtualInstructionPtr lhs;
 	VirtualInstructionPtr rhs;
 };
@@ -95,11 +126,16 @@ struct VirtualInstructionStore
 struct VirtualInstructionLoad
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionLoad"; }
+	virtual std::string ToString() { return "load"; }
 };
 
 struct VirtualInstructionNew
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionNew"; }
+	virtual std::string ToString() { return "new"; }
+
 	VirtualInstruction identifier;
 	VirtualInstruction type;
 };
@@ -107,6 +143,9 @@ struct VirtualInstructionNew
 struct VirtualInstructionDelete
 	: VirtualInstruction
 {
+	virtual const char* DebugType() { return "VirtualInstructionDelete"; }
+	virtual std::string ToString() { return "delete"; }
+
 	VirtualInstruction identifier;
 };
 

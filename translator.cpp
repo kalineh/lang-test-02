@@ -110,7 +110,9 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 	case Token::Int:
 		// TODO: lexical cast
 		//Append(reg.New<int>(boost::lexical_cast<int>(node->token.Text())));
-		//AppendNew<VirtualInstructionLiteralInt>(node->token.Text());
+		//auto i = slow_lexical_cast<int>(node->token.Text());
+		//auto p = std::make_shared<VirtualInstructionLiteralInteger>(i);
+		AppendNew<VirtualInstructionLiteralInteger>(slow_lexical_cast<int>(node->token.Text()));
 		return;
 
 	case Token::Float:

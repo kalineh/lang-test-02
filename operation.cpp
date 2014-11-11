@@ -3,6 +3,11 @@
 
 #include "operation.h"
 
+const char* Operation::ToString() const
+{
+	return ToString(value);
+}
+
 const char *Operation::ToString(int value)
 {
 	switch (value)

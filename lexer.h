@@ -8,9 +8,20 @@
 #include <map>
 #include <iostream>
 #include <strstream>
+#include <sstream>
 
 #include "token.h"
 #include "slice.h"
+
+template <class T, class A>
+T slow_lexical_cast(const A& a)
+{
+	T result;
+	std::stringstream stream;
+	stream << a;
+	stream >> result;
+	return result;
+}
 
 struct Process
 {

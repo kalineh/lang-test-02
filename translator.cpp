@@ -308,6 +308,19 @@ std::string Translator::Result() const
 	return "NYI";
 }
 
+const VirtualInstructionList& Translator::ResultInstructions() const
+{
+	return instructions;
+}
+
+void Translator::Print(std::ostream& out) const
+{
+	for (auto it : instructions)
+	{
+		out << it->ToStringType() << ": " << it->ToStringValue() << std::endl;
+	}
+}
+
 void Translator::AppendNewOp(Operation::Type op)
 {
 	AppendNew<VirtualInstructionOperation>(op);

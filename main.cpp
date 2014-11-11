@@ -307,7 +307,8 @@ int main(int argc, char** argv)
 	auto translator = std::make_shared<Translator>(parser);
 
 	//lexer->Print();
-	parser->Print();
+	//parser->Print();
+	translator->Print();
 
 	return 0;
 

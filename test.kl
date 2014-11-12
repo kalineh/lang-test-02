@@ -1,4 +1,6 @@
 
+a = 1;
+
 fun r(a)
 	Print(a)
 	if a > 0

@@ -291,6 +291,7 @@ bool test_func_call_real(void* arg)
 #include "lexer.h"
 #include "parser.h"
 #include "translator.h"
+#include "writer.h"
 
 int main(int argc, char** argv)
 {
@@ -307,7 +308,7 @@ int main(int argc, char** argv)
 	auto translator = std::make_shared<Translator>(parser);
 
 	//lexer->Print();
-	//parser->Print();
+	parser->Print();
 	//translator->Print();
 
 	WriterText writer;

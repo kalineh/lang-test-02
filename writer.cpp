@@ -43,26 +43,37 @@ void WriterText::WriteNode(VirtualInstructionPtr node, int level)
 			break;
 
 		case VirtualInstructionType::VirtualInstructionBlock:
+			std::cout << "BLOCK(" << node->ToStringValue() << ")" << std::endl;
 			for (auto it : std::static_pointer_cast<VirtualInstructionBlock>(node)->value)
 				WriteNode(it, level + 1);
 			break;
 
 		case VirtualInstructionType::VirtualInstructionFunction:
+			std::cout << "FUNCTION(" << node->ToStringValue() << ")" << std::endl;
 			break;
 
 		case VirtualInstructionType::VirtualInstructionCall:
 			break;
+			std::cout << "CALL(" << node->ToStringValue() << ")" << std::endl;
 
 		case VirtualInstructionType::VirtualInstructionStore:
+			std::cout << "STORE(" << node->ToStringValue() << ")" << std::endl;
 			break;
 
 		case VirtualInstructionType::VirtualInstructionLoad:
+			std::cout << "LOAD(" << node->ToStringValue() << ")" << std::endl;
 			break;
 
 		case VirtualInstructionType::VirtualInstructionNew:
+			std::cout << "NEW(" << node->ToStringValue() << ")" << std::endl;
 			break;
 
 		case VirtualInstructionType::VirtualInstructionDelete:
+			std::cout << "DELETE(" << node->ToStringValue() << ")" << std::endl;
+			break;
+
+		default:
+			std::cout << "Unknown instruction: " << node->ToStringValue() << std::endl;	
 			break;
 	}
 }

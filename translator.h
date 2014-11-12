@@ -17,14 +17,13 @@ struct Translator : Process
 	struct Exception { };
 	struct Unsupported : Exception { };
 
-	VirtualInstructionList instructions;
-	// TODO: is this needed?
-	//VirtualInstructionList stack;
+	VirtualInstructionBlockList stack;
 
 	explicit Translator(std::shared_ptr<Parser> p);
 
 	std::string Result() const;
-	const VirtualInstructionList& ResultInstructions() const;
+
+	const VirtualInstructionBlockList& Stack();
 
 private:
 	typedef Parser::NodePtr NodePtr;
@@ -42,8 +41,6 @@ private:
 	void TranslateCall(NodePtr node);
 	void TranslateIndex(NodePtr node);
 
-	VirtualInstructionPtr Top();
-
 	void PushNew();
 
 	void Append(VirtualInstructionPtr instruction);
@@ -56,7 +53,8 @@ private:
 
 	void AppendNewOp(Operation::Type op);
 
-	VirtualInstructionPtr Pop();
+	VirtualInstructionBlockPtr Top();
+	VirtualInstructionBlockPtr Pop();
 
 	void TranslateIf(Parser::NodePtr node);
 	void TranslateFor(Parser::NodePtr node);

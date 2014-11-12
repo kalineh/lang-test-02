@@ -27,15 +27,20 @@ struct VirtualInstructionType
 	};
 };
 
+struct VirtualInstruction;
+struct VirtualInstructionBlock;
+
+typedef std::shared_ptr<VirtualInstruction> VirtualInstructionPtr;
+typedef std::shared_ptr<VirtualInstructionBlock> VirtualInstructionBlockPtr;
+typedef std::vector<VirtualInstructionBlockPtr> VirtualInstructionBlockList;
+typedef std::vector<VirtualInstructionPtr> VirtualInstructionList;
+
 struct VirtualInstruction
 {
 	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstruction; }
 	virtual const char* ToStringType() { return "VirtualInstruction"; }
 	virtual std::string ToStringValue() { return std::string("<nul>"); } 
 };
-
-typedef std::shared_ptr<VirtualInstruction> VirtualInstructionPtr;
-typedef std::vector<VirtualInstructionPtr> VirtualInstructionList;
 
 struct VirtualInstructionOperation
 	: VirtualInstruction

@@ -229,7 +229,10 @@ bool Parser::Statement(NodePtr block)
 	}
 
 	if (!Expression())
+	{
+		Fail(Lexer::CreateErrorMessage(Current(), "Failed to parse token"));
 		return false;
+	}
 
 	block->Add(Pop());
 

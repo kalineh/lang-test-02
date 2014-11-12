@@ -1,8 +1,10 @@
 
 a = 1;
+b = 2;
 
-fun r(a)
-	Print(a)
-	if a > 0
-		r(a - 1)
-	
+fun foo()
+{
+	return 1;
+}
+
+c = foo

@@ -7,10 +7,10 @@
 
 Translator::Translator(std::shared_ptr<Parser> p)
 {
+	PushNew();
+
 	if (p->Failed)
 		return;
-
-	PushNew();
 
 	try
 	{
@@ -269,31 +269,32 @@ void Translator::TranslateCall(NodePtr node)
 		AppendNewOp(Operation::SuspendNew);
 }
 
-VirtualInstructionPtr Translator::Top()
+const VirtualInstructionBlockList& Translator::Stack()
 {
-	// TODO: do we need a stack?
-	//return stack.back();
-	return instructions.back();
+	return stack;
+}
+
+VirtualInstructionBlockPtr Translator::Top()
+{
+	return stack.back();
 }
 
 void Translator::PushNew()
 {
 	auto block = std::make_shared<VirtualInstructionBlock>();
 
-	instructions.push_back(block);
+	stack.push_back(block);
 }
 
 void Translator::Append(VirtualInstructionPtr instruction)
 {
-	// TODO: should be stack push?
-	instructions.push_back(instruction);
+	Top()->value.push_back(instruction);
 }
 
-VirtualInstructionPtr Translator::Pop()
+VirtualInstructionBlockPtr Translator::Pop()
 {
-	// TODO: pop from stack?
 	auto top = Top();
-	instructions.pop_back();
+	stack.pop_back();
 	return top;
 }
 
@@ -306,11 +307,6 @@ std::string Translator::Result() const
 	//return str.ToString().c_str();
 
 	return "NYI";
-}
-
-const VirtualInstructionList& Translator::ResultInstructions() const
-{
-	return instructions;
 }
 
 void Translator::AppendNewOp(Operation::Type op)

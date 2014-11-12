@@ -307,13 +307,25 @@ int main(int argc, char** argv)
 	auto parser = std::make_shared<Parser>(lexer);
 	auto translator = std::make_shared<Translator>(parser);
 
+	if (lexer->Failed)
+	{
+		std::cout << lexer->Error << std::endl;
+		return -1;
+	}
+
+	if (parser->Failed)
+	{
+		std::cout << parser->Error << std::endl;
+		return -1;
+	}
+
 	//lexer->Print();
 	parser->Print();
 	//translator->Print();
 
 	WriterText writer;
 
-	for (auto it : translator->ResultInstructions())
+	for (auto it : translator->Stack())
 		writer.Write(it);
 
 	return 0;

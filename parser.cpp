@@ -17,10 +17,23 @@ Parser::Parser(std::shared_ptr<Lexer> lexer, Structure st)
 	if (lexer->Failed)
 		return;
 
-	// strip whitespace and comments
+	// strip irrelevant tokens
 	for (auto tok : lexer->tokens)
-		if (tok.type != Token::Whitespace && tok.type != Token::Comment)
-			tokens.push_back(tok);
+	{
+		if (tok.type == Token::NewLine)
+			continue;
+
+		if (tok.type == Token::Whitespace)
+			continue;
+
+		if (tok.type == Token::Tab)
+			continue;
+
+		if (tok.type == Token::Comment)
+			continue;
+
+		tokens.push_back(tok);
+	}
 
 	root = NewNode(Node::Program);
 
@@ -83,7 +96,6 @@ bool Parser::Program()
 {
 	while (!Try(Token::None) && !Failed)
 	{
-		ConsumeNewLines();
 		Statement(root);
 	}
 
@@ -92,8 +104,6 @@ bool Parser::Program()
 
 void Parser::Function(NodePtr node)
 {
-	ConsumeNewLines();
-
 	Expect(Token::Fun);
 	Expect(Token::Ident);
 	auto name = Last();
@@ -114,7 +124,8 @@ void Parser::Function(NodePtr node)
 	}
 
 	Expect(Token::CloseParan);
-	Expect(Token::NewLine);
+	// TODO: check this
+	//Expect(Token::Semi);
 	
 	AddBlock(fun);
 	node->Add(fun);
@@ -132,46 +143,11 @@ Parser::NodePtr Parser::NewNode(Token const &t)
 
 void Parser::Block(NodePtr node)
 {
-	ConsumeNewLines();
+	Expect(Token::OpenBrace);
 
-	++indent;
-	while (!Failed)
-	{
-		int level = 0;
-		while (Try(Token::Tab))
-		{
-			++level;
-			Consume();
-		}
+	Statement(node);
 
-		if (Try(Token::NewLine))
-		{
-			Consume();
-			continue;
-		}
-
-		// close current block
-		if (level < indent)
-		{
-			--indent;
-
-			// rewind to start of tab sequence to determine next block
-			--current;
-			while (Try(Token::Tab))
-				--current;
-
-			++current;
-			return;
-		}
-
-		if (level != indent)
-		{
-			Fail(Lexer::CreateErrorMessage(Current(), "Mismatch block indent"));
-			return;
-		}
-
-		Statement(node);
-	}
+	Expect(Token::CloseBrace);
 }
 
 bool Parser::Statement(NodePtr block)
@@ -190,6 +166,7 @@ bool Parser::Statement(NodePtr block)
 			auto ass = NewNode(Consume());
 			ass->Add(Pop());
 			Push(ass);
+			Expect(Token::Semi);
 			goto finis;
 		}
 
@@ -200,6 +177,7 @@ bool Parser::Statement(NodePtr block)
 			if (Expression())
 				ret->Add(Pop());
 			block->Add(ret);
+			Expect(Token::Semi);
 			goto finis;
 		}
 		
@@ -234,15 +212,13 @@ bool Parser::Statement(NodePtr block)
 		return false;
 	}
 
-	block->Add(Pop());
-
-finis:
-	// statements can end with an optional semi followed by a new line
+	//Expect(Token::Semi);
 	if (Try(Token::Semi))
 		Consume();
 
-	Expect(Token::NewLine);
+	block->Add(Pop());
 
+finis:
 	return true;
 }
 
@@ -594,6 +570,8 @@ void Parser::IfCondition(NodePtr block)
 
 	Consume();
 
+	Expect(Token::OpenParan);
+
 	// get the test expression
 	if (!Expression())
 	{
@@ -602,7 +580,8 @@ void Parser::IfCondition(NodePtr block)
 	}
 
 	NodePtr condition = Pop();
-	//Expect(Token::CloseParan);
+
+	Expect(Token::CloseParan);
 
 	// get the true-clause
 	NodePtr trueClause = NewNode(Node::Block);
@@ -719,10 +698,4 @@ void Parser::AddBlock(NodePtr fun)
 	auto block = NewNode(Node::Block);
 	Block(block);
 	fun->Add(block);
-}
-
-void Parser::ConsumeNewLines()
-{
-	while (Try(Token::NewLine))
-		Consume();
 }

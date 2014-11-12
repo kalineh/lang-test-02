@@ -2,9 +2,7 @@
 a = 1;
 b = 2;
 
-fun foo()
+def fun()
 {
 	return 1;
 }
-
-c = foo

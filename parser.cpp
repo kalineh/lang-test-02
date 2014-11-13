@@ -143,17 +143,37 @@ Parser::NodePtr Parser::NewNode(Token const &t)
 
 void Parser::Block(NodePtr node)
 {
-	Expect(Token::OpenBrace);
+	if (!Try(Token::OpenBrace))
+		return;
 
-	Statement(node);
+	Consume();
 
-	Expect(Token::CloseBrace);
+	auto block = NewNode(Node::Block);
+
+	Push(block);
+
+	while (Statement(block))
+	{
+		if (Try(Token::CloseBrace))
+		{
+			Consume();
+			break;
+		}
+	}
+
+	Pop();
 }
 
 bool Parser::Statement(NodePtr block)
 {
 	switch (Current().type)
 	{
+		case Token::OpenBrace:
+		{
+			Block(block);
+			return true;
+		}
+
 		case Token::Assert:
 		{
 			Consume();
@@ -207,14 +227,9 @@ bool Parser::Statement(NodePtr block)
 	}
 
 	if (!Expression())
-	{
-		Fail(Lexer::CreateErrorMessage(Current(), "Failed to parse token"));
 		return false;
-	}
 
-	//Expect(Token::Semi);
-	if (Try(Token::Semi))
-		Consume();
+	Expect(Token::Semi);
 
 	block->Add(Pop());
 

@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "operation.h"
-#include "virtual_instruction.h"
+#include "intermediate.h"
 
 struct Translator : Process
 {

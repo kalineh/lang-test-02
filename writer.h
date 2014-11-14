@@ -9,7 +9,7 @@
 #include <vector>
 #include <memory>
 
-#include "virtual_instruction.h"
+#include "intermediate.h"
 
 struct WriterText
 {

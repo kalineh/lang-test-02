@@ -1,6 +1,6 @@
 #include "core.h"
 #include "writer.h"
-#include "virtual_instruction.h"
+#include "intermediate.h"
 
 //#include <boost/lexical_cast.hpp>
 //#include <boost/range/adaptor/reversed.hpp>

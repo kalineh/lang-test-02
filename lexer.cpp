@@ -13,11 +13,6 @@ bool Process::Fail(const std::string &err)
 	return false;
 }
 
-#ifndef WINDOWS
-#define vsprintf_s vsprintf
-#define sprintf_s sprintf
-#endif
-
 bool Process::Fail(const char *fmt, ...)
 {
 	va_list ap;

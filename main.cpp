@@ -295,7 +295,7 @@ bool test_func_call_real(void* arg)
 
 int main(int argc, char** argv)
 {
-	auto in = std::fstream("../test.kl", std::ios::in | std::ios::binary);
+	std::ifstream in("test.kl", std::ios::in | std::ios::binary);
 	auto input = std::string(
 		std::istreambuf_iterator<char>(in),
 		std::istreambuf_iterator<char>()

@@ -73,8 +73,11 @@ const char * Token::ToString(Type t)
 	case DivAssign: return "DivAssign";
 	case Yield: return "Yield";
 	}
+
 	static char b[100];
+#ifdef WINDOWS
 	_itoa_s(t, b, 100, 10);
+#endif
 	return b;
 }
 

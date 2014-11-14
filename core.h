@@ -58,5 +58,12 @@ inline mem8* ofs32(mem8* p, int ofs) { return p + ofs * SZ; }
 inline mem8* inc32(mem8* p) { return ofs32(p, +1); }
 inline mem8* dec32(mem8* p) { return ofs32(p, -1); }
 
+// TODO: find and replace with safer versions for non-windows systems 
+#ifndef WINDOWS
+#	define vsprintf_s vsprintf
+#	define sprintf_s sprintf
+#endif
+
 #include "test.h"
 #include "vm.h"
+

@@ -111,22 +111,22 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 		// TODO: lexical cast
 		//Append(reg.New<int>(boost::lexical_cast<int>(node->token.Text())));
 		//auto i = slow_lexical_cast<int>(node->token.Text());
-		//auto p = std::make_shared<VirtualInstructionLiteralInteger>(i);
-		AppendNew<VirtualInstructionLiteralInteger>(slow_lexical_cast<int>(node->token.Text()));
+		//auto p = std::make_shared<IntermediateLiteralInteger>(i);
+		AppendNew<IntermediateLiteralInteger>(slow_lexical_cast<int>(node->token.Text()));
 		return;
 
 	case Token::Float:
 		// TODO: lexical cast
 		//Append(reg.New<float>(boost::lexical_cast<float>(node->token.Text())));
-		//AppendNew<VirtualInstructionLiteralFloat>(node->token.Text());
+		//AppendNew<IntermediateLiteralFloat>(node->token.Text());
 		return;
 
 	case Token::String:
-		AppendNew<VirtualInstructionLiteralString>(node->token.Text());
+		AppendNew<IntermediateLiteralString>(node->token.Text());
 		return;
 
 	case Token::Ident:
-		AppendNew<VirtualInstructionLiteralIdentifier>(node->token.Text());
+		AppendNew<IntermediateLiteralIdentifier>(node->token.Text());
 		return;
 
 	case Token::Yield:
@@ -245,11 +245,11 @@ void Translator::TranslateFunction(NodePtr node)
 
 	// add the args
 	for (auto a : ch[1]->Children)
-		AppendNew<VirtualInstructionLiteralIdentifier>(a->token.Text());
+		AppendNew<IntermediateLiteralIdentifier>(a->token.Text());
 
 	// write the name and store
 	//AppendNew(Label(ch[0]->token.Text()));
-	AppendNew<VirtualInstructionLiteralIdentifier>(ch[0]->token.Text());
+	AppendNew<IntermediateLiteralIdentifier>(ch[0]->token.Text());
 
 	// TODO: probably dont need a store for us, since we arent 
 	//       really translating a function as a value
@@ -269,29 +269,29 @@ void Translator::TranslateCall(NodePtr node)
 		AppendNewOp(Operation::SuspendNew);
 }
 
-const VirtualInstructionBlockList& Translator::Stack()
+const IntermediateBlockList& Translator::Stack()
 {
 	return stack;
 }
 
-VirtualInstructionBlockPtr Translator::Top()
+IntermediateBlockPtr Translator::Top()
 {
 	return stack.back();
 }
 
 void Translator::PushNew()
 {
-	auto block = std::make_shared<VirtualInstructionBlock>();
+	auto block = std::make_shared<IntermediateBlock>();
 
 	stack.push_back(block);
 }
 
-void Translator::Append(VirtualInstructionPtr instruction)
+void Translator::Append(IntermediatePtr instruction)
 {
 	Top()->value.push_back(instruction);
 }
 
-VirtualInstructionBlockPtr Translator::Pop()
+IntermediateBlockPtr Translator::Pop()
 {
 	auto top = Top();
 	stack.pop_back();
@@ -311,7 +311,7 @@ std::string Translator::Result() const
 
 void Translator::AppendNewOp(Operation::Type op)
 {
-	AppendNew<VirtualInstructionOperation>(op);
+	AppendNew<IntermediateOperation>(op);
 }
 
 void Translator::TranslateIf(Parser::NodePtr node)

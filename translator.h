@@ -17,13 +17,13 @@ struct Translator : Process
 	struct Exception { };
 	struct Unsupported : Exception { };
 
-	VirtualInstructionBlockList stack;
+	IntermediateBlockList stack;
 
 	explicit Translator(std::shared_ptr<Parser> p);
 
 	std::string Result() const;
 
-	const VirtualInstructionBlockList& Stack();
+	const IntermediateBlockList& Stack();
 
 private:
 	typedef Parser::NodePtr NodePtr;
@@ -43,7 +43,7 @@ private:
 
 	void PushNew();
 
-	void Append(VirtualInstructionPtr instruction);
+	void Append(IntermediatePtr instruction);
 
 	template <class T>
 	void AppendNew(const T& t)
@@ -53,8 +53,8 @@ private:
 
 	void AppendNewOp(Operation::Type op);
 
-	VirtualInstructionBlockPtr Top();
-	VirtualInstructionBlockPtr Pop();
+	IntermediateBlockPtr Top();
+	IntermediateBlockPtr Pop();
 
 	void TranslateIf(Parser::NodePtr node);
 	void TranslateFor(Parser::NodePtr node);

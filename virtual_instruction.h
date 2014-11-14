@@ -7,178 +7,178 @@
 
 #include "operation.h"
 
-struct VirtualInstructionType
+struct IntermediateType
 {
 	enum Type
 	{
-		VirtualInstruction,
-		VirtualInstructionOperation,
-		VirtualInstructionLiteralInteger,
-		VirtualInstructionLiteralFloat,
-		VirtualInstructionLiteralString,
-		VirtualInstructionLiteralIdentifier,
-		VirtualInstructionBlock,
-		VirtualInstructionFunction,
-		VirtualInstructionCall,
-		VirtualInstructionStore,
-		VirtualInstructionLoad,
-		VirtualInstructionNew,
-		VirtualInstructionDelete,
+		Intermediate,
+		IntermediateOperation,
+		IntermediateLiteralInteger,
+		IntermediateLiteralFloat,
+		IntermediateLiteralString,
+		IntermediateLiteralIdentifier,
+		IntermediateBlock,
+		IntermediateFunction,
+		IntermediateCall,
+		IntermediateStore,
+		IntermediateLoad,
+		IntermediateNew,
+		IntermediateDelete,
 	};
 };
 
-struct VirtualInstruction;
-struct VirtualInstructionBlock;
+struct Intermediate;
+struct IntermediateBlock;
 
-typedef std::shared_ptr<VirtualInstruction> VirtualInstructionPtr;
-typedef std::shared_ptr<VirtualInstructionBlock> VirtualInstructionBlockPtr;
-typedef std::vector<VirtualInstructionBlockPtr> VirtualInstructionBlockList;
-typedef std::vector<VirtualInstructionPtr> VirtualInstructionList;
+typedef std::shared_ptr<Intermediate> IntermediatePtr;
+typedef std::shared_ptr<IntermediateBlock> IntermediateBlockPtr;
+typedef std::vector<IntermediateBlockPtr> IntermediateBlockList;
+typedef std::vector<IntermediatePtr> IntermediateList;
 
-struct VirtualInstruction
+struct Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstruction; }
-	virtual const char* ToStringType() { return "VirtualInstruction"; }
+	virtual const int GetTypeId() { return IntermediateType::Intermediate; }
+	virtual const char* ToStringType() { return "Intermediate"; }
 	virtual std::string ToStringValue() { return std::string("<nul>"); } 
 };
 
-struct VirtualInstructionOperation
-	: VirtualInstruction
+struct IntermediateOperation
+	: Intermediate
 {
-	VirtualInstructionOperation() { } 
-	VirtualInstructionOperation(const Operation& value) : value(value) { }
-	VirtualInstructionOperation(Operation::Type value) : value(value) { }
+	IntermediateOperation() { } 
+	IntermediateOperation(const Operation& value) : value(value) { }
+	IntermediateOperation(Operation::Type value) : value(value) { }
 
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionOperation; }
-	virtual const char* ToStringType() { return "VirtualInstructionOperation"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateOperation; }
+	virtual const char* ToStringType() { return "IntermediateOperation"; }
 	virtual std::string ToStringValue() { return std::string(value.ToString()); }
 
 	Operation value;
 };
 
-struct VirtualInstructionLiteralInteger
-	: VirtualInstruction
+struct IntermediateLiteralInteger
+	: Intermediate
 {
-	VirtualInstructionLiteralInteger() { } 
-	VirtualInstructionLiteralInteger(int value) : value(value) { }
+	IntermediateLiteralInteger() { } 
+	IntermediateLiteralInteger(int value) : value(value) { }
 
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionLiteralInteger; }
-	virtual const char* ToStringType() { return "VirtualInstructionLiteralInteger"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateLiteralInteger; }
+	virtual const char* ToStringType() { return "IntermediateLiteralInteger"; }
 	virtual std::string ToStringValue() { return slow_lexical_cast<std::string>(value); }
 
 	int value;
 };
 
-struct VirtualInstructionLiteralFloat
-	: VirtualInstruction
+struct IntermediateLiteralFloat
+	: Intermediate
 {
-	VirtualInstructionLiteralFloat() { } 
-	VirtualInstructionLiteralFloat(float value) : value(value) { }
+	IntermediateLiteralFloat() { } 
+	IntermediateLiteralFloat(float value) : value(value) { }
 
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionLiteralFloat; }
-	virtual const char* ToStringType() { return "VirtualInstructionLiteralFloat"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateLiteralFloat; }
+	virtual const char* ToStringType() { return "IntermediateLiteralFloat"; }
 	virtual std::string ToStringValue() { return slow_lexical_cast<std::string>(value); }
 
 	float value;
 };
 
-struct VirtualInstructionLiteralString
-	: VirtualInstruction
+struct IntermediateLiteralString
+	: Intermediate
 {
-	VirtualInstructionLiteralString() { } 
-	VirtualInstructionLiteralString(const char* value) : value(value) { }
-	VirtualInstructionLiteralString(const std::string& value) : value(value) { }
+	IntermediateLiteralString() { } 
+	IntermediateLiteralString(const char* value) : value(value) { }
+	IntermediateLiteralString(const std::string& value) : value(value) { }
 
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionLiteralString; }
-	virtual const char* ToStringType() { return "VirtualInstructionLiteralString"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateLiteralString; }
+	virtual const char* ToStringType() { return "IntermediateLiteralString"; }
 	virtual std::string ToStringValue() { return value; }
 
 	std::string value;
 };
 
-struct VirtualInstructionLiteralIdentifier
-	: VirtualInstruction
+struct IntermediateLiteralIdentifier
+	: Intermediate
 {
-	VirtualInstructionLiteralIdentifier() { } 
-	VirtualInstructionLiteralIdentifier(const char* value) : value(value) { }
-	VirtualInstructionLiteralIdentifier(const std::string& value) : value(value) { }
+	IntermediateLiteralIdentifier() { } 
+	IntermediateLiteralIdentifier(const char* value) : value(value) { }
+	IntermediateLiteralIdentifier(const std::string& value) : value(value) { }
 
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionLiteralIdentifier; }
-	virtual const char* ToStringType() { return "VirtualInstructionLiteralIdentifier"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateLiteralIdentifier; }
+	virtual const char* ToStringType() { return "IntermediateLiteralIdentifier"; }
 	virtual std::string ToStringValue() { return value; }
 
 	std::string value;
 };
 
-struct VirtualInstructionBlock
-	: VirtualInstruction
+struct IntermediateBlock
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionBlock; }
-	virtual const char* ToStringType() { return "VirtualInstructionBlock"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateBlock; }
+	virtual const char* ToStringType() { return "IntermediateBlock"; }
 	virtual std::string ToStringValue() { return "block"; }
 
-	VirtualInstructionList value;
+	IntermediateList value;
 };
 
-struct VirtualInstructionFunction
-	: VirtualInstruction
+struct IntermediateFunction
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionFunction; }
-	virtual const char* ToStringType() { return "VirtualInstructionFunction"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateFunction; }
+	virtual const char* ToStringType() { return "IntermediateFunction"; }
 	virtual std::string ToStringValue() { return "function"; }
 
-	VirtualInstructionPtr identifier;
+	IntermediatePtr identifier;
 	// TODO: args
 	// TODO: block
 };
 
-struct VirtualInstructionCall
-	: VirtualInstruction
+struct IntermediateCall
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionCall; }
-	virtual const char* ToStringType() { return "VirtualInstructionCall"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateCall; }
+	virtual const char* ToStringType() { return "IntermediateCall"; }
 	virtual std::string ToStringValue() { return "call"; }
 
-	VirtualInstructionPtr identifier;
-	VirtualInstructionList args;
+	IntermediatePtr identifier;
+	IntermediateList args;
 };
 
-struct VirtualInstructionStore
-	: VirtualInstruction
+struct IntermediateStore
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionStore; }
-	virtual const char* ToStringType() { return "VirtualInstructionStore"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateStore; }
+	virtual const char* ToStringType() { return "IntermediateStore"; }
 	virtual std::string ToStringValue() { return "store"; }
 
-	VirtualInstructionPtr lhs;
-	VirtualInstructionPtr rhs;
+	IntermediatePtr lhs;
+	IntermediatePtr rhs;
 };
 
-struct VirtualInstructionLoad
-	: VirtualInstruction
+struct IntermediateLoad
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionLoad; }
-	virtual const char* ToStringType() { return "VirtualInstructionLoad"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateLoad; }
+	virtual const char* ToStringType() { return "IntermediateLoad"; }
 	virtual std::string ToStringValue() { return "load"; }
 };
 
-struct VirtualInstructionNew
-	: VirtualInstruction
+struct IntermediateNew
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionNew; }
-	virtual const char* ToStringType() { return "VirtualInstructionNew"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateNew; }
+	virtual const char* ToStringType() { return "IntermediateNew"; }
 	virtual std::string ToStringValue() { return "new"; }
 
-	VirtualInstruction identifier;
-	VirtualInstruction type;
+	Intermediate identifier;
+	Intermediate type;
 };
 
-struct VirtualInstructionDelete
-	: VirtualInstruction
+struct IntermediateDelete
+	: Intermediate
 {
-	virtual const int GetTypeId() { return VirtualInstructionType::VirtualInstructionDelete; }
-	virtual const char* ToStringType() { return "VirtualInstructionDelete"; }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateDelete; }
+	virtual const char* ToStringType() { return "IntermediateDelete"; }
 	virtual std::string ToStringValue() { return "delete"; }
 
-	VirtualInstruction identifier;
+	Intermediate identifier;
 };

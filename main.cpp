@@ -295,7 +295,6 @@ bool test_func_call_real(void* arg)
 
 int main(int argc, char** argv)
 {
-/*
 	auto in = std::fstream("../test.kl", std::ios::in | std::ios::binary);
 	auto input = std::string(
 		std::istreambuf_iterator<char>(in),
@@ -303,8 +302,6 @@ int main(int argc, char** argv)
 	);
 
 	in.close();
-*/
-	std::string input = "int n = 0;";
 
 	auto lexer = std::make_shared<Lexer>(input.c_str());
 	auto parser = std::make_shared<Parser>(lexer);

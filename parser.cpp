@@ -162,6 +162,8 @@ void Parser::Block(NodePtr node)
 	}
 
 	Pop();
+
+	node->Add(block);
 }
 
 bool Parser::Statement(NodePtr block)
@@ -708,9 +710,10 @@ bool Parser::CreateError(const char *text)
 	return Fail(Lexer::CreateErrorMessage(Current(), text));
 }
 
-void Parser::AddBlock(NodePtr fun)
+void Parser::AddBlock(NodePtr node)
 {
+	// TODO: this doesnt make sense with our brace parsing
 	auto block = NewNode(Node::Block);
 	Block(block);
-	fun->Add(block);
+	node->Add(block);
 }

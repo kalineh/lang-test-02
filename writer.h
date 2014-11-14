@@ -9,14 +9,14 @@
 #include <vector>
 #include <memory>
 
-#include "virtual_instruction.h"
+#include "intermediate.h"
 
 struct WriterText
 {
-	void Write(VirtualInstructionPtr node);
+	void Write(IntermediatePtr node);
 
 private:
-	void WriteNode(VirtualInstructionPtr node, int level = 0);
+	void WriteNode(IntermediatePtr node, int level = 0);
 };
 
 struct WriterVM

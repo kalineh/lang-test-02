@@ -312,6 +312,8 @@ int main(int argc, char** argv)
 		std::cout << lexer->Error << std::endl;
 		return -1;
 	}
+	
+	lexer->Print();
 
 	if (parser->Failed)
 	{
@@ -319,7 +321,6 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	//lexer->Print();
 	parser->Print();
 	//translator->Print();
 

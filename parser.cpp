@@ -124,10 +124,8 @@ void Parser::Function(NodePtr node)
 	}
 
 	Expect(Token::CloseParan);
-	// TODO: check this
-	//Expect(Token::Semi);
 	
-	AddBlock(fun);
+	Block(fun);
 	node->Add(fun);
 }
 

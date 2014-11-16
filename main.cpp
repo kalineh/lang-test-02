@@ -326,8 +326,7 @@ int main(int argc, char** argv)
 
 	WriterText writer;
 
-	for (auto it : translator->Stack())
-		writer.Write(it);
+	writer.Write(translator->Root());
 
 	return 0;
 

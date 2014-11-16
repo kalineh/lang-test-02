@@ -123,13 +123,16 @@ struct IntermediateBlock
 struct IntermediateFunction
 	: Intermediate
 {
+	IntermediateFunction() { } 
+	IntermediateFunction(IntermediatePtr ident, IntermediateList args, IntermediateBlockPtr block) : ident(ident), args(args), block(block) { }
+
 	virtual const int GetTypeId() { return IntermediateType::IntermediateFunction; }
 	virtual const char* ToStringType() { return "IntermediateFunction"; }
 	virtual std::string ToStringValue() { return "function"; }
 
-	IntermediatePtr identifier;
-	// TODO: args
-	// TODO: block
+	IntermediatePtr ident;
+	IntermediateList args;
+	IntermediateBlockPtr block;
 };
 
 struct IntermediateCall

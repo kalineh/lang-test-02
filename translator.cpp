@@ -7,7 +7,9 @@
 
 Translator::Translator(std::shared_ptr<Parser> p)
 {
-	PushNew();
+	PushBlock();
+
+	root = Top();
 
 	if (p->Failed)
 		return;
@@ -193,10 +195,10 @@ void Translator::Translate(Parser::NodePtr node)
 		return;
 
 	case Node::Block:
-		PushNew();
+		PushBlock();
 		for (auto st : node->Children)
 			Translate(st);
-		Append(Pop());
+		PopBlock();
 		return;
 
 	case Node::List:
@@ -227,33 +229,35 @@ void Translator::Translate(Parser::NodePtr node)
 
 void Translator::TranslateBlock(NodePtr node)
 {
+	// TODO: dont we put a block on the list too?
 	for (auto st : node->Children)
 		Translate(st);
 }
 
 void Translator::TranslateFunction(NodePtr node)
 {
-	// child 0: ident
-	// child 1: args
-	// child 2: block
-	Node::ChildrenType const &ch = node->Children;
+	auto ident = node->Children[0];
+	auto args = node->Children[1];
+	auto block = node->Children[2];
 
-	// write the body
-	PushNew();
-	for (auto b : ch[2]->Children)
-		Translate(b);
+	auto func = std::make_shared<IntermediateFunction>();
 
-	// add the args
-	for (auto a : ch[1]->Children)
-		AppendNew<IntermediateLiteralIdentifier>(a->token.Text());
+	// TODO: do we want to bundle up everything on the stack
+	//       of things, or put them in these class-like objects?
 
-	// write the name and store
-	//AppendNew(Label(ch[0]->token.Text()));
-	AppendNew<IntermediateLiteralIdentifier>(ch[0]->token.Text());
+	Append(func);
 
-	// TODO: probably dont need a store for us, since we arent 
-	//       really translating a function as a value
-	AppendNewOp(Operation::Store);
+	for (auto a : args->Children)
+	{
+		auto c = std::make_shared<IntermediateLiteralIdentifier>(a->token.Text());
+		func->args.push_back(c);
+	}
+
+	for (auto b : block->Children)
+	{
+		// TODO: we cant get a intermediate block ptr from here
+		Translate(b);	
+	}
 }
 
 void Translator::TranslateCall(NodePtr node)
@@ -269,33 +273,29 @@ void Translator::TranslateCall(NodePtr node)
 		AppendNewOp(Operation::SuspendNew);
 }
 
-const IntermediateBlockList& Translator::Stack()
+IntermediateBlockPtr Translator::Root()
 {
-	return stack;
+	return root;
+}
+
+void Translator::PushBlock()
+{
+	stack.push_back(std::make_shared<IntermediateBlock>());
+}
+
+void Translator::PopBlock()
+{
+	stack.pop_back();
 }
 
 IntermediateBlockPtr Translator::Top()
 {
-	return stack.back();
-}
-
-void Translator::PushNew()
-{
-	auto block = std::make_shared<IntermediateBlock>();
-
-	stack.push_back(block);
+	return stack[stack.size() - 1];
 }
 
 void Translator::Append(IntermediatePtr instruction)
 {
-	Top()->value.push_back(instruction);
-}
-
-IntermediateBlockPtr Translator::Pop()
-{
-	auto top = Top();
-	stack.pop_back();
-	return top;
+	root->value.push_back(instruction);
 }
 
 std::string Translator::Result() const

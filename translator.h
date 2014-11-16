@@ -17,13 +17,18 @@ struct Translator : Process
 	struct Exception { };
 	struct Unsupported : Exception { };
 
+	IntermediateBlockPtr root;
 	IntermediateBlockList stack;
 
 	explicit Translator(std::shared_ptr<Parser> p);
 
 	std::string Result() const;
 
-	const IntermediateBlockList& Stack();
+	// we dont want a stack
+	// the root is a top-level block
+	// everything else goes into that
+
+	IntermediateBlockPtr Root();
 
 private:
 	typedef Parser::NodePtr NodePtr;
@@ -41,7 +46,10 @@ private:
 	void TranslateCall(NodePtr node);
 	void TranslateIndex(NodePtr node);
 
-	void PushNew();
+	void PushBlock();
+	void PopBlock();
+
+	IntermediateBlockPtr Top();
 
 	void Append(IntermediatePtr instruction);
 
@@ -52,9 +60,6 @@ private:
 	}
 
 	void AppendNewOp(Operation::Type op);
-
-	IntermediateBlockPtr Top();
-	IntermediateBlockPtr Pop();
 
 	void TranslateIf(Parser::NodePtr node);
 	void TranslateFor(Parser::NodePtr node);

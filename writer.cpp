@@ -44,7 +44,7 @@ void WriterText::WriteNode(IntermediatePtr node, int level)
 
 		case IntermediateType::IntermediateBlock:
 			std::cout << "BLOCK(" << node->ToStringValue() << ")" << std::endl;
-			for (auto it : std::static_pointer_cast<IntermediateBlock>(node)->value)
+			for (auto it : *std::static_pointer_cast<IntermediateBlock>(node)->value)
 				WriteNode(it, level + 1);
 			break;
 

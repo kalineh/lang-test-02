@@ -34,6 +34,7 @@ typedef std::shared_ptr<Intermediate> IntermediatePtr;
 typedef std::shared_ptr<IntermediateBlock> IntermediateBlockPtr;
 typedef std::vector<IntermediateBlockPtr> IntermediateBlockList;
 typedef std::vector<IntermediatePtr> IntermediateList;
+typedef std::shared_ptr<IntermediateList> IntermediateListPtr;
 
 struct Intermediate
 {
@@ -113,25 +114,31 @@ struct IntermediateLiteralIdentifier
 struct IntermediateBlock
 	: Intermediate
 {
+	IntermediateBlock()
+	{
+		value = std::make_shared<IntermediateList>();
+	}
+
 	virtual const int GetTypeId() { return IntermediateType::IntermediateBlock; }
 	virtual const char* ToStringType() { return "IntermediateBlock"; }
 	virtual std::string ToStringValue() { return "block"; }
 
-	IntermediateList value;
+	IntermediateListPtr value;
 };
 
 struct IntermediateFunction
 	: Intermediate
 {
 	IntermediateFunction() { } 
-	IntermediateFunction(IntermediatePtr ident, IntermediateList args, IntermediateBlockPtr block) : ident(ident), args(args), block(block) { }
+	IntermediateFunction(IntermediatePtr ident) : ident(ident) { }
+	IntermediateFunction(IntermediatePtr ident, IntermediateListPtr args, IntermediateBlockPtr block) : ident(ident), args(args), block(block) { }
 
 	virtual const int GetTypeId() { return IntermediateType::IntermediateFunction; }
 	virtual const char* ToStringType() { return "IntermediateFunction"; }
 	virtual std::string ToStringValue() { return "function"; }
 
 	IntermediatePtr ident;
-	IntermediateList args;
+	IntermediateListPtr args;
 	IntermediateBlockPtr block;
 };
 

@@ -242,22 +242,25 @@ void Translator::TranslateFunction(NodePtr node)
 
 	auto func = std::make_shared<IntermediateFunction>();
 
-	// TODO: do we want to bundle up everything on the stack
-	//       of things, or put them in these class-like objects?
-
-	Append(func);
+	func->ident = std::make_shared<IntermediateLiteralIdentifier>(ident->token.Text());
 
 	for (auto a : args->Children)
 	{
 		auto c = std::make_shared<IntermediateLiteralIdentifier>(a->token.Text());
-		func->args.push_back(c);
+		func->args->push_back(c);
 	}
+
+	PushBlock();
+	func->block = Top();
 
 	for (auto b : block->Children)
 	{
-		// TODO: we cant get a intermediate block ptr from here
 		Translate(b);	
 	}
+
+	PopBlock();
+
+	Append(func);
 }
 
 void Translator::TranslateCall(NodePtr node)
@@ -295,7 +298,7 @@ IntermediateBlockPtr Translator::Top()
 
 void Translator::Append(IntermediatePtr instruction)
 {
-	root->value.push_back(instruction);
+	Top()->value->push_back(instruction);
 }
 
 std::string Translator::Result() const

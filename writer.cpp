@@ -50,6 +50,8 @@ void WriterText::WriteNode(IntermediatePtr node, int level)
 
 		case IntermediateType::IntermediateFunction:
 			std::cout << "FUNCTION(" << node->ToStringValue() << ")" << std::endl;
+			for (auto it : *std::static_pointer_cast<IntermediateFunction>(node)->block->value)
+				WriteNode(it, level + 1);
 			break;
 
 		case IntermediateType::IntermediateCall:

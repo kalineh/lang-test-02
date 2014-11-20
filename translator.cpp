@@ -154,7 +154,14 @@ void Translator::TranslateBinaryOp(Parser::NodePtr node, Operation::Type op)
 	Translate(node->Children[0]);
 	Translate(node->Children[1]);
 
-	AppendNewOp(op);
+	// parser must trap invalid non-expressions
+	// so this code doesnt need to (beyond asserts
+
+	auto lhs = TranslateExpression(node->Children[0]);
+	auto rhs = TranslateExpression(node->Children[1]);
+	auto operation = std::make_shared<IntermediateBinaryOperation>(op, lhs, rhs);
+
+	Append(operation);
 }
 
 void Translator::Translate(Parser::NodePtr node)
@@ -310,11 +317,6 @@ std::string Translator::Result() const
 	//return str.ToString().c_str();
 
 	return "NYI";
-}
-
-void Translator::AppendNewOp(Operation::Type op)
-{
-	AppendNew<IntermediateOperation>(op);
 }
 
 void Translator::TranslateIf(Parser::NodePtr node)

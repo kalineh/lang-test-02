@@ -12,7 +12,8 @@ struct IntermediateType
 	enum Type
 	{
 		Intermediate,
-		IntermediateOperation,
+		IntermediateExpression,
+		IntermediateBinaryOperation,
 		IntermediateLiteralInteger,
 		IntermediateLiteralFloat,
 		IntermediateLiteralString,
@@ -29,12 +30,17 @@ struct IntermediateType
 
 struct Intermediate;
 struct IntermediateBlock;
+struct IntermediateExpression;
 
 typedef std::shared_ptr<Intermediate> IntermediatePtr;
 typedef std::shared_ptr<IntermediateBlock> IntermediateBlockPtr;
+typedef std::shared_ptr<IntermediateExpression> IntermediateExpressionPtr;
+
 typedef std::vector<IntermediateBlockPtr> IntermediateBlockList;
 typedef std::vector<IntermediatePtr> IntermediateList;
+
 typedef std::shared_ptr<IntermediateList> IntermediateListPtr;
+
 
 struct Intermediate
 {
@@ -43,22 +49,31 @@ struct Intermediate
 	virtual std::string ToStringValue() { return std::string("<nul>"); } 
 };
 
-struct IntermediateOperation
+struct IntermediateExpression
 	: Intermediate
 {
-	IntermediateOperation() { } 
-	IntermediateOperation(const Operation& value) : value(value) { }
-	IntermediateOperation(Operation::Type value) : value(value) { }
+	IntermediateExpression() { }
 
-	virtual const int GetTypeId() { return IntermediateType::IntermediateOperation; }
-	virtual const char* ToStringType() { return "IntermediateOperation"; }
-	virtual std::string ToStringValue() { return std::string(value.ToString()); }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateExpression; }
+	virtual const char* ToStringType() { return "IntermediateExpression"; }
+};
 
-	Operation value;
+struct IntermediateBinaryOperation
+	: IntermediateExpression
+{
+	IntermediateExpression() { }
+
+	virtual const int GetTypeId() { return IntermediateType::IntermediateExpression; }
+	virtual const char* ToStringType() { return "IntermediateExpression"; }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + operation.ToString() + rhs->ToStringValue(); }
+
+	Operation::Type operation;
+	IntermediateExpressionPtr lhs;
+	IntermediateExpressionPtr rhs;
 };
 
 struct IntermediateLiteralInteger
-	: Intermediate
+	: IntermediateExpression
 {
 	IntermediateLiteralInteger() { } 
 	IntermediateLiteralInteger(int value) : value(value) { }
@@ -71,7 +86,7 @@ struct IntermediateLiteralInteger
 };
 
 struct IntermediateLiteralFloat
-	: Intermediate
+	: IntermediateExpression
 {
 	IntermediateLiteralFloat() { } 
 	IntermediateLiteralFloat(float value) : value(value) { }
@@ -84,7 +99,7 @@ struct IntermediateLiteralFloat
 };
 
 struct IntermediateLiteralString
-	: Intermediate
+	: IntermediateExpression
 {
 	IntermediateLiteralString() { } 
 	IntermediateLiteralString(const char* value) : value(value) { }
@@ -98,7 +113,7 @@ struct IntermediateLiteralString
 };
 
 struct IntermediateLiteralIdentifier
-	: Intermediate
+	: IntermediateExpression
 {
 	IntermediateLiteralIdentifier() { } 
 	IntermediateLiteralIdentifier(const char* value) : value(value) { }

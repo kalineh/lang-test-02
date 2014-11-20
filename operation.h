@@ -4,6 +4,8 @@
 #include "core.h"
 #include "operation.h"
 
+// TODO: operation removed to be replaced by vm.h
+
 /// An Operation represents an action to be taken by and Executor
 struct Operation
 {

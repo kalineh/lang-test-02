@@ -5,6 +5,4 @@ fun foo()
 }
 
 y = 1;
-
-// todo: fix the block pop after a func
-// everything is stacked on root node
+z = 1;

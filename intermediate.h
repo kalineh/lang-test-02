@@ -56,6 +56,7 @@ struct IntermediateExpression
 
 	virtual const int GetTypeId() { return IntermediateType::IntermediateExpression; }
 	virtual const char* ToStringType() { return "IntermediateExpression"; }
+	virtual std::string ToStringValue() { return std::string("<expr>"); } 
 };
 
 struct IntermediateBinaryOperation
@@ -66,7 +67,7 @@ struct IntermediateBinaryOperation
 
 	virtual const int GetTypeId() { return IntermediateType::IntermediateBinaryOperation; }
 	virtual const char* ToStringType() { return "IntermediateBinaryOperation"; }
-	virtual std::string ToStringValue() { return lhs->ToStringValue() + Operation::ToString(op) + rhs->ToStringValue(); }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + " " + Operation::ToString(op) + " " + rhs->ToStringValue(); }
 
 	Operation::Type op;
 	IntermediateExpressionPtr lhs;

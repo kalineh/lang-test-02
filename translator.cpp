@@ -151,15 +151,20 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 
 void Translator::TranslateBinaryOp(Parser::NodePtr node, Operation::Type op)
 {
+	PushBlock();
+
 	Translate(node->Children[0]);
 	Translate(node->Children[1]);
 
 	auto lhs = RetrieveByOffset<IntermediateExpression>(-0);
 	auto rhs = RetrieveByOffset<IntermediateExpression>(-1);
 
+	PopBlock();
+	
 	auto operation = std::make_shared<IntermediateBinaryOperation>(op, lhs, rhs);
 
 	Append(operation);
+
 }
 
 void Translator::Translate(Parser::NodePtr node)

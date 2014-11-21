@@ -61,13 +61,14 @@ struct IntermediateExpression
 struct IntermediateBinaryOperation
 	: IntermediateExpression
 {
-	IntermediateExpression() { }
+	IntermediateBinaryOperation() { }
+	IntermediateBinaryOperation(Operation::Type op, IntermediateExpressionPtr lhs, IntermediateExpressionPtr rhs) : op(op), lhs(lhs), rhs(rhs) { }
 
-	virtual const int GetTypeId() { return IntermediateType::IntermediateExpression; }
-	virtual const char* ToStringType() { return "IntermediateExpression"; }
-	virtual std::string ToStringValue() { return lhs->ToStringValue() + operation.ToString() + rhs->ToStringValue(); }
+	virtual const int GetTypeId() { return IntermediateType::IntermediateBinaryOperation; }
+	virtual const char* ToStringType() { return "IntermediateBinaryOperation"; }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + Operation::ToString(op) + rhs->ToStringValue(); }
 
-	Operation::Type operation;
+	Operation::Type op;
 	IntermediateExpressionPtr lhs;
 	IntermediateExpressionPtr rhs;
 };

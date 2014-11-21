@@ -9,7 +9,7 @@ Translator::Translator(std::shared_ptr<Parser> p)
 {
 	PushBlock();
 
-	root = Top();
+	root = TopBlock();
 
 	if (p->Failed)
 		return;
@@ -154,11 +154,9 @@ void Translator::TranslateBinaryOp(Parser::NodePtr node, Operation::Type op)
 	Translate(node->Children[0]);
 	Translate(node->Children[1]);
 
-	// parser must trap invalid non-expressions
-	// so this code doesnt need to (beyond asserts
+	auto lhs = RetrieveByOffset<IntermediateExpression>(-0);
+	auto rhs = RetrieveByOffset<IntermediateExpression>(-1);
 
-	auto lhs = TranslateExpression(node->Children[0]);
-	auto rhs = TranslateExpression(node->Children[1]);
 	auto operation = std::make_shared<IntermediateBinaryOperation>(op, lhs, rhs);
 
 	Append(operation);
@@ -187,10 +185,7 @@ void Translator::Translate(Parser::NodePtr node)
 		return;
 
 	case Node::Assignment:
-		// like a binary op, but argument order is reversed
-		Translate(node->Children[1]);
-		Translate(node->Children[0]);
-		AppendNewOp(Operation::Store);
+		TranslateBinaryOp(node, Operation::Store);
 		return;
 
 	case Node::Call:
@@ -258,7 +253,7 @@ void Translator::TranslateFunction(NodePtr node)
 	}
 
 	PushBlock();
-	func->block = Top();
+	func->block = TopBlock();
 
 	for (auto b : block->Children)
 	{
@@ -298,14 +293,14 @@ void Translator::PopBlock()
 	stack.pop_back();
 }
 
-IntermediateBlockPtr Translator::Top()
+IntermediateBlockPtr Translator::TopBlock()
 {
 	return stack[stack.size() - 1];
 }
 
 void Translator::Append(IntermediatePtr instruction)
 {
-	Top()->value->push_back(instruction);
+	TopBlock()->value->push_back(instruction);
 }
 
 std::string Translator::Result() const

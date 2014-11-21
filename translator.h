@@ -33,7 +33,6 @@ struct Translator : Process
 private:
 	typedef Parser::NodePtr NodePtr;
 
-	void Traverse(NodePtr node);
 	void TranslateFunction(NodePtr node);
 	void TranslateBlock(NodePtr node);
 	void Translate(NodePtr node);
@@ -49,7 +48,16 @@ private:
 	void PushBlock();
 	void PopBlock();
 
-	IntermediateBlockPtr Top();
+	IntermediateBlockPtr TopBlock();
+
+	template <class T>
+	std::shared_ptr<T> RetrieveByOffset(int offset)
+	{
+		auto block = TopBlock();
+		auto result = (*block->value)[block->value->size() + offset - 1];
+
+		return std::static_pointer_cast<T>(result);
+	}
 
 	void Append(IntermediatePtr instruction);
 
@@ -59,7 +67,10 @@ private:
 		Append(std::make_shared<T>(t));
 	}
 
-	void AppendNewOp(Operation::Type op);
+	void AppendNewOp(Operation::Type op)
+	{
+		// TODO: remove
+	}
 
 	void TranslateIf(Parser::NodePtr node);
 	void TranslateFor(Parser::NodePtr node);

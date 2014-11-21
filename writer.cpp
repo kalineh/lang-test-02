@@ -22,7 +22,11 @@ void WriterText::WriteNode(IntermediatePtr node, int level)
 			std::cout << "<base>" << std::endl;
 			break;
 
-		case IntermediateType::IntermediateOperation:
+		case IntermediateType::IntermediateExpression:
+			std::cout << "EXPR(" << node->ToStringValue() << ")" << std::endl;
+			break;
+
+		case IntermediateType::IntermediateBinaryOperation:
 			std::cout << "OP(" << node->ToStringValue() << ")" << std::endl;
 			break;
 

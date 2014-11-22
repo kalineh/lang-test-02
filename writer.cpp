@@ -59,8 +59,8 @@ void WriterText::WriteNode(IntermediatePtr node, int level)
 			break;
 
 		case IntermediateType::IntermediateCall:
-			break;
 			std::cout << "CALL(" << node->ToStringValue() << ")" << std::endl;
+			break;
 
 		case IntermediateType::IntermediateStore:
 			std::cout << "STORE(" << node->ToStringValue() << ")" << std::endl;

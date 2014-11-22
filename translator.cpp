@@ -272,15 +272,41 @@ void Translator::TranslateFunction(NodePtr node)
 
 void Translator::TranslateCall(NodePtr node)
 {
-	Node::ChildrenType &children = node->Children;
-	for (auto a : children[1]->Children)
-		Translate(a);
+	auto children = node->Children;
+	auto child_ident = children[0];
+	auto child_args = children[1];
 
-	Translate(children[0]);
-	if (children.size() > 2 && children[2]->token.type == Token::Replace)
-		AppendNewOp(Operation::Replace);
-	else
-		AppendNewOp(Operation::SuspendNew);
+	PushBlock();
+
+	for (auto arg : child_args->Children)
+		Translate(arg);
+
+	Translate(child_ident);
+
+	auto ident = RetrieveByOffset<IntermediateLiteralIdentifier>(-0);
+	auto args = std::make_shared<IntermediateList>();
+
+	for (int i = 0; i < (int)child_args->Children.size(); ++i)
+	{
+		auto a = RetrieveByOffset<IntermediateExpression>(-1 + -i);
+		args->push_back(a);
+	}
+
+	PopBlock();
+
+	auto call = std::make_shared<IntermediateCall>(ident, args);
+	
+	Append(call);
+
+	//Node::ChildrenType &children = node->Children;
+	//for (auto a : children[1]->Children)
+		//Translate(a);
+
+	//Translate(children[0]);
+	//if (children.size() > 2 && children[2]->token.type == Token::Replace)
+		//AppendNewOp(Operation::Replace);
+	//else
+		//AppendNewOp(Operation::SuspendNew);
 }
 
 IntermediateBlockPtr Translator::Root()

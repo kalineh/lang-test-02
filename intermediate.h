@@ -162,12 +162,16 @@ struct IntermediateFunction
 struct IntermediateCall
 	: Intermediate
 {
+	IntermediateCall() { }
+	IntermediateCall(IntermediatePtr ident) : ident(ident) { }
+	IntermediateCall(IntermediatePtr ident, IntermediateListPtr args) : ident(ident), args(args) { }
+
 	virtual const int GetTypeId() { return IntermediateType::IntermediateCall; }
 	virtual const char* ToStringType() { return "IntermediateCall"; }
-	virtual std::string ToStringValue() { return "call"; }
+	virtual std::string ToStringValue() { return ident->ToStringValue() + "(" + slow_lexical_cast<std::string>(args->size()) + ")"; }
 
-	IntermediatePtr identifier;
-	IntermediateList args;
+	IntermediatePtr ident;
+	IntermediateListPtr args;
 };
 
 struct IntermediateStore

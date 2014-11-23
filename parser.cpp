@@ -96,7 +96,8 @@ bool Parser::Program()
 {
 	while (!Try(Token::None) && !Failed)
 	{
-		Statement(root);
+		if (!Statement(root))
+			break;
 	}
 
 	return true;

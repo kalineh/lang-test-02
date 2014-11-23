@@ -105,7 +105,7 @@ bool Parser::Program()
 
 void Parser::Function(NodePtr node)
 {
-	Expect(Token::Fun);
+	Expect(Token::Func);
 	Expect(Token::Ident);
 	auto name = Last();
 	auto fun = NewNode(Node::Function);
@@ -220,7 +220,7 @@ bool Parser::Statement(NodePtr block)
 			return true;
 		}
 		
-		case Token::Fun:
+		case Token::Func:
 		{
 			Function(block);
 			return true;
@@ -309,10 +309,60 @@ bool Parser::Expression()
 	if (!Logical())
 		return false;
 
-	if (Try(Token::Assign) || Try(Token::PlusAssign) || Try(Token::MinusAssign) || Try(Token::MulAssign) || Try(Token::DivAssign))
+	if (Try(Token::Colon))
+	{
+		if (PeekIs(Token::TypeAuto) ||
+			PeekIs(Token::TypeInt) ||
+			PeekIs(Token::TypeFloat) ||
+			PeekIs(Token::TypeString) ||
+			PeekIs(Token::Func))
+		{
+			auto colon = NewNode(Consume());
+			auto ident = Pop();
+			auto type = NewNode(Consume());
+
+			if (Try(Token::Assign))
+			{
+				auto node = NewNode(Consume());	
+
+				if (!Logical())
+				{
+					Fail(Lexer::CreateErrorMessage(Current(), "Assignment requires an expression"));
+					return false;
+				}
+
+				node->Add(Pop());
+				node->Add(ident);
+				node->Add(type);
+				Push(node);
+
+				return true;
+			}
+			else
+			{
+				Fail(Lexer::CreateErrorMessage(Current(), "Missing assignment after type specifier"));
+				return false;
+			}
+		}
+		else
+		{
+			Fail(Lexer::CreateErrorMessage(Current(), "Missing type specifier after colon"));
+			return false;
+		}
+	}
+
+	// if it is an assign, make assign node, or += node, or other
+
+	if (Try(Token::Assign) ||
+		Try(Token::PlusAssign) ||
+		Try(Token::MinusAssign) ||
+		Try(Token::MulAssign) ||
+		Try(Token::DivAssign))
 	{
 		auto node = NewNode(Consume());
 		auto ident = Pop();
+		// NOTE: using incorrect slice/lexer data
+		auto type = NewNode(Token(Token::TypeAuto, *Current().lexer, Current().lineNumber, Current().slice));
 		if (!Logical())
 		{
 			Fail(Lexer::CreateErrorMessage(Current(), "Assignment requires an expression"));
@@ -321,6 +371,7 @@ bool Parser::Expression()
 
 		node->Add(Pop());
 		node->Add(ident);
+		node->Add(type);
 		Push(node);
 	}
 

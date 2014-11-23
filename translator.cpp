@@ -49,8 +49,12 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 		TranslateBinaryOp(node, Operation::PlusEquals);
 		return;
 
+	case Token::Colon:
+		TranslateAssignment(node);
+		return;
+
 	case Token::Assign:
-		TranslateBinaryOp(node, Operation::Store);
+		TranslateAssignment(node);
 		return;
 
 	case Token::Lookup:
@@ -131,6 +135,13 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 		AppendNew<IntermediateLiteralIdentifier>(node->token.Text());
 		return;
 
+	case Token::TypeAuto:
+	case Token::TypeInt:
+	case Token::TypeFloat:
+	case Token::TypeString:
+		AppendNew<IntermediateLiteralIdentifier>(node->token.Text());
+		return;
+
 	case Token::Yield:
 		//for (auto ch : node->Children)
 		//	Translate(ch);
@@ -147,6 +158,26 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 
 	Fail("Unsupported node %s (token %s)", Node::ToString(node->type), Token::ToString(node->token.type));
 	throw Unsupported();
+}
+
+void Translator::TranslateAssignment(Parser::NodePtr node)
+{
+	PushBlock();
+
+	Translate(node->Children[0]);
+	Translate(node->Children[1]);
+	Translate(node->Children[2]);
+
+	auto type = RetrieveByOffset<Intermediate>(-0);
+	auto lhs = RetrieveByOffset<IntermediateExpression>(-1);
+	auto rhs = RetrieveByOffset<IntermediateExpression>(-2);
+
+	PopBlock();
+	
+	auto assignment = std::make_shared<IntermediateAssignment>(type, lhs, rhs);
+
+	Append(assignment);
+
 }
 
 void Translator::TranslateBinaryOp(Parser::NodePtr node, Operation::Type op)

@@ -40,11 +40,14 @@ void Lexer::AddKeywords()
 	keyWords["false"] = Token::False;
 	keyWords["return"] = Token::Return;
 	keyWords["self"] = Token::Self;
-	keyWords["fun"] = Token::Fun;
+	keyWords["func"] = Token::Func;
 	keyWords["yield"] = Token::Yield;
 	keyWords["in"] = Token::In;
 	keyWords["while"] = Token::While;
 	keyWords["assert"] = Token::Assert;
+	keyWords["int"] = Token::TypeInt;
+	keyWords["float"] = Token::TypeFloat;
+	keyWords["string"] = Token::TypeString;
 }
 
 bool Lexer::Run()

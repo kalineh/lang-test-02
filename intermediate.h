@@ -13,6 +13,7 @@ struct IntermediateType
 	{
 		Intermediate,
 		IntermediateExpression,
+		IntermediateAssignment,
 		IntermediateBinaryOperation,
 		IntermediateLiteralInteger,
 		IntermediateLiteralFloat,
@@ -57,6 +58,21 @@ struct IntermediateExpression
 	virtual const int GetTypeId() { return IntermediateType::IntermediateExpression; }
 	virtual const char* ToStringType() { return "IntermediateExpression"; }
 	virtual std::string ToStringValue() { return std::string("<expr>"); } 
+};
+
+struct IntermediateAssignment
+	: IntermediateExpression
+{
+	IntermediateAssignment() { }
+	IntermediateAssignment(IntermediatePtr type, IntermediateExpressionPtr lhs, IntermediateExpressionPtr rhs) : type(type), lhs(lhs), rhs(rhs) { }
+
+	virtual const int GetTypeId() { return IntermediateType::IntermediateAssignment; }
+	virtual const char* ToStringType() { return "IntermediateAssignment"; }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + " : " + type->ToStringValue() + " = " + rhs->ToStringValue(); }
+
+	IntermediatePtr type;
+	IntermediateExpressionPtr lhs;
+	IntermediateExpressionPtr rhs;
 };
 
 struct IntermediateBinaryOperation
@@ -187,8 +203,9 @@ struct IntermediateStore
 {
 	virtual const int GetTypeId() { return IntermediateType::IntermediateStore; }
 	virtual const char* ToStringType() { return "IntermediateStore"; }
-	virtual std::string ToStringValue() { return "store"; }
+	virtual std::string ToStringValue() { return "store." + type->ToStringValue(); }
 
+	IntermediatePtr type;
 	IntermediatePtr lhs;
 	IntermediatePtr rhs;
 };

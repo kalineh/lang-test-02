@@ -26,6 +26,10 @@ void WriterText::WriteNode(IntermediatePtr node, int level)
 			std::cout << "EXPR(" << node->ToStringValue() << ")" << std::endl;
 			break;
 
+		case IntermediateType::IntermediateAssignment:
+			std::cout << "ASSIGN(" << node->ToStringValue() << ")" << std::endl;
+			break;
+
 		case IntermediateType::IntermediateBinaryOperation:
 			std::cout << "OP(" << node->ToStringValue() << ")" << std::endl;
 			break;

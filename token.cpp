@@ -63,7 +63,7 @@ const char * Token::ToString(Type t)
 	case Decrement: return "--";
 	case Self: return "Self";
 	case Lookup: return "Lookup";
-	case Fun: return "Fun";
+	case Func: return "Func";
 	case Tab: return "Tab";
 	case NewLine: return "NewLine";
 	case Comment: return "Comment";
@@ -72,6 +72,10 @@ const char * Token::ToString(Type t)
 	case MulAssign: return "MulAssign";
 	case DivAssign: return "DivAssign";
 	case Yield: return "Yield";
+	case TypeAuto: return "TypeAuto";
+	case TypeInt: return "TypeInt";
+	case TypeFloat: return "TypeInt";
+	case TypeString: return "TypeString";
 	}
 	static char b[100];
 	_itoa_s(t, b, 100, 10);

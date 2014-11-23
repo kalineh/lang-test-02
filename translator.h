@@ -37,6 +37,7 @@ private:
 	void TranslateBlock(NodePtr node);
 	void Translate(NodePtr node);
 	void TranslateBinaryOp(NodePtr node, Operation::Type);
+	void TranslateAssignment(NodePtr node);
 
 	// TODO: not create strings on each call: store the conversion in a map or something
 	std::string ConvertOp(NodePtr node);

@@ -48,7 +48,7 @@ struct Token
 		Tab,
 		NewLine,
 		
-		Fun,
+		Func,
 
 		Comment,
 
@@ -59,6 +59,10 @@ struct Token
 		In, Colon,
 		Assert,
 
+		TypeAuto,
+		TypeInt,
+		TypeFloat,
+		TypeString,
 	};
 
 	static const char *ToString(Type t);

@@ -109,7 +109,7 @@ struct IntermediateLiteralString
 
 	virtual const int GetTypeId() { return IntermediateType::IntermediateLiteralString; }
 	virtual const char* ToStringType() { return "IntermediateLiteralString"; }
-	virtual std::string ToStringValue() { return value; }
+	virtual std::string ToStringValue() { return "'" + value + "'"; }
 
 	std::string value;
 };

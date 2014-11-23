@@ -168,7 +168,15 @@ struct IntermediateCall
 
 	virtual const int GetTypeId() { return IntermediateType::IntermediateCall; }
 	virtual const char* ToStringType() { return "IntermediateCall"; }
-	virtual std::string ToStringValue() { return ident->ToStringValue() + "(" + slow_lexical_cast<std::string>(args->size()) + ")"; }
+	virtual std::string ToStringValue()
+	{
+		std::string s = ident->ToStringValue();
+		s += "(";
+		for (auto a : *args)
+			s += a->ToStringValue();
+		s += ")";
+		return s;
+	}
 
 	IntermediatePtr ident;
 	IntermediateListPtr args;

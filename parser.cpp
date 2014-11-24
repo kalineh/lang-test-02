@@ -311,47 +311,52 @@ bool Parser::Expression()
 
 	if (Try(Token::Colon))
 	{
-		if (PeekIs(Token::TypeAuto) ||
-			PeekIs(Token::TypeInt) ||
-			PeekIs(Token::TypeFloat) ||
-			PeekIs(Token::TypeString) ||
-			PeekIs(Token::Func))
+		auto colon = NewNode(Consume());
+		auto ident = Pop();
+
+		// if assign, is auto
+		// if typeid, is typed
+
+		NodePtr type;
+
+		if (Try(Token::TypeAuto) ||
+			Try(Token::TypeInt) ||
+			Try(Token::TypeFloat) ||
+			Try(Token::TypeString) ||
+			Try(Token::Func))
 		{
-			auto colon = NewNode(Consume());
-			auto ident = Pop();
-			auto type = NewNode(Consume());
+			type = NewNode(Consume());
+		}
 
-			if (Try(Token::Assign))
+		if (Try(Token::Assign))
+		{
+			Consume();
+
+			// TODO: uninit
+			//if (Try(Token::Uninitialized)) { ... }
+
+			if (!Logical())
 			{
-				auto node = NewNode(Consume());	
-
-				if (!Logical())
-				{
-					Fail(Lexer::CreateErrorMessage(Current(), "Assignment requires an expression"));
-					return false;
-				}
-
-				node->Add(Pop());
-				node->Add(ident);
-				node->Add(type);
-				Push(node);
-
-				return true;
-			}
-			else
-			{
-				Fail(Lexer::CreateErrorMessage(Current(), "Missing assignment after type specifier"));
+				Fail(Lexer::CreateErrorMessage(Current(), "Declaration missing assignment"));
 				return false;
 			}
-		}
-		else
-		{
-			Fail(Lexer::CreateErrorMessage(Current(), "Missing type specifier after colon"));
-			return false;
-		}
-	}
 
-	// if it is an assign, make assign node, or += node, or other
+			colon->Add(Pop());
+			colon->Add(ident);
+
+			if (type)
+			{
+				colon->Add(type);
+			}
+
+			Push(colon);
+
+			return true;
+		}
+
+		Fail(Lexer::CreateErrorMessage(Current(), "Missing assignment after declaration")); 
+		return false;
+	}
 
 	if (Try(Token::Assign) ||
 		Try(Token::PlusAssign) ||
@@ -361,8 +366,7 @@ bool Parser::Expression()
 	{
 		auto node = NewNode(Consume());
 		auto ident = Pop();
-		// NOTE: using incorrect slice/lexer data
-		auto type = NewNode(Token(Token::TypeAuto, *Current().lexer, Current().lineNumber, Current().slice));
+
 		if (!Logical())
 		{
 			Fail(Lexer::CreateErrorMessage(Current(), "Assignment requires an expression"));
@@ -371,7 +375,6 @@ bool Parser::Expression()
 
 		node->Add(Pop());
 		node->Add(ident);
-		node->Add(type);
 		Push(node);
 	}
 

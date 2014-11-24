@@ -50,7 +50,7 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 		return;
 
 	case Token::Colon:
-		TranslateAssignment(node);
+		TranslateDeclaration(node);
 		return;
 
 	case Token::Assign:
@@ -160,21 +160,67 @@ void Translator::TranslateFromToken(Parser::NodePtr node)
 	throw Unsupported();
 }
 
+void Translator::TranslateDeclaration(Parser::NodePtr node)
+{
+	// implicit type
+	if (node->Children.size() == 2)
+	{
+		PushBlock();
+
+		Translate(node->Children[0]);
+		Translate(node->Children[1]);
+
+		auto lhs = RetrieveByOffset<IntermediateExpression>(-0);
+		auto rhs = RetrieveByOffset<IntermediateExpression>(-1);
+
+		PopBlock();
+
+		auto decl = std::make_shared<IntermediateDeclarationImplicit>(lhs, rhs);
+
+		Append(decl);
+
+		return;
+	}
+
+	// explicit type
+	if (node->Children.size() == 3)
+	{
+		PushBlock();
+
+		Translate(node->Children[0]);
+		Translate(node->Children[1]);
+		Translate(node->Children[2]);
+
+		auto type = RetrieveByOffset<IntermediateExpression>(-0);
+		auto lhs = RetrieveByOffset<IntermediateExpression>(-1);
+		auto rhs = RetrieveByOffset<IntermediateExpression>(-2);
+
+		PopBlock();
+
+		auto decl = std::make_shared<IntermediateDeclarationExplicit>(type, lhs, rhs);
+
+		Append(decl);
+
+		return;
+	}
+
+	Fail("Unexpected declaration nodes");
+	throw Unsupported();
+}
+
 void Translator::TranslateAssignment(Parser::NodePtr node)
 {
 	PushBlock();
 
 	Translate(node->Children[0]);
 	Translate(node->Children[1]);
-	Translate(node->Children[2]);
 
-	auto type = RetrieveByOffset<Intermediate>(-0);
-	auto lhs = RetrieveByOffset<IntermediateExpression>(-1);
-	auto rhs = RetrieveByOffset<IntermediateExpression>(-2);
+	auto lhs = RetrieveByOffset<IntermediateExpression>(-0);
+	auto rhs = RetrieveByOffset<IntermediateExpression>(-1);
 
 	PopBlock();
 	
-	auto assignment = std::make_shared<IntermediateAssignment>(type, lhs, rhs);
+	auto assignment = std::make_shared<IntermediateAssignment>(lhs, rhs);
 
 	Append(assignment);
 

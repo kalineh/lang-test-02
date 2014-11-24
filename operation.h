@@ -21,6 +21,7 @@ struct Operation
 		CppMethodCall,
 		Plus, Minus, Multiply, Divide, Modulo,
 		TypeOf,
+		Decl,
 		Store, Retreive, Remove,
 		New,
 		Assign,

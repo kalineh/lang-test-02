@@ -13,6 +13,8 @@ struct IntermediateType
 	{
 		Intermediate,
 		IntermediateExpression,
+		IntermediateDeclarationImplicit,
+		IntermediateDeclarationExplicit,
 		IntermediateAssignment,
 		IntermediateBinaryOperation,
 		IntermediateLiteralInteger,
@@ -60,17 +62,45 @@ struct IntermediateExpression
 	virtual std::string ToStringValue() { return std::string("<expr>"); } 
 };
 
+struct IntermediateDeclarationImplicit
+	: IntermediateExpression
+{
+	IntermediateDeclarationImplicit() { }
+	IntermediateDeclarationImplicit(IntermediateExpressionPtr lhs, IntermediateExpressionPtr rhs) : lhs(lhs), rhs(rhs) { }
+
+	virtual const int GetTypeId() { return IntermediateType::IntermediateDeclarationImplicit; }
+	virtual const char* ToStringType() { return "IntermediateDeclarationImplicit"; }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + " := " + rhs->ToStringValue(); }
+
+	IntermediateExpressionPtr lhs;
+	IntermediateExpressionPtr rhs;
+};
+
+struct IntermediateDeclarationExplicit
+	: IntermediateExpression
+{
+	IntermediateDeclarationExplicit() { }
+	IntermediateDeclarationExplicit(IntermediatePtr type, IntermediateExpressionPtr lhs, IntermediateExpressionPtr rhs) : type(type), lhs(lhs), rhs(rhs) { }
+
+	virtual const int GetTypeId() { return IntermediateType::IntermediateDeclarationExplicit; }
+	virtual const char* ToStringType() { return "IntermediateDeclarationExplicit"; }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + " : " + type->ToStringValue() + " = " + rhs->ToStringValue(); }
+
+	IntermediatePtr type;
+	IntermediateExpressionPtr lhs;
+	IntermediateExpressionPtr rhs;
+};
+
 struct IntermediateAssignment
 	: IntermediateExpression
 {
 	IntermediateAssignment() { }
-	IntermediateAssignment(IntermediatePtr type, IntermediateExpressionPtr lhs, IntermediateExpressionPtr rhs) : type(type), lhs(lhs), rhs(rhs) { }
+	IntermediateAssignment(IntermediateExpressionPtr lhs, IntermediateExpressionPtr rhs) : lhs(lhs), rhs(rhs) { }
 
 	virtual const int GetTypeId() { return IntermediateType::IntermediateAssignment; }
 	virtual const char* ToStringType() { return "IntermediateAssignment"; }
-	virtual std::string ToStringValue() { return lhs->ToStringValue() + " : " + type->ToStringValue() + " = " + rhs->ToStringValue(); }
+	virtual std::string ToStringValue() { return lhs->ToStringValue() + " = " + rhs->ToStringValue(); }
 
-	IntermediatePtr type;
 	IntermediateExpressionPtr lhs;
 	IntermediateExpressionPtr rhs;
 };

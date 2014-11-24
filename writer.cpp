@@ -26,6 +26,14 @@ void WriterText::WriteNode(IntermediatePtr node, int level)
 			std::cout << "EXPR(" << node->ToStringValue() << ")" << std::endl;
 			break;
 
+		case IntermediateType::IntermediateDeclarationImplicit:
+			std::cout << "DECLI(" << node->ToStringValue() << ")" << std::endl;
+			break;
+
+		case IntermediateType::IntermediateDeclarationExplicit:
+			std::cout << "DECLE(" << node->ToStringValue() << ")" << std::endl;
+			break;
+
 		case IntermediateType::IntermediateAssignment:
 			std::cout << "ASSIGN(" << node->ToStringValue() << ")" << std::endl;
 			break;

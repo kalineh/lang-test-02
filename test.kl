@@ -1,4 +1,8 @@
 
-x := 10;
-y : int = 10;
-x = 10;
+x : () = () {};
+y : () : int = () {};
+
+foo = (int, int) : int {};
+x = f; // implicit auto
+x : auto = f; // explicit auto
+x : (int, int) : int = f;

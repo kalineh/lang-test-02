@@ -230,7 +230,8 @@ bool Parser::Statement(NodePtr block)
 	if (!Expression())
 		return false;
 
-	Expect(Token::Semi);
+	// a block does not require a semicolon?
+	//Expect(Token::Semi);
 
 	block->Add(Pop());
 
@@ -309,21 +310,93 @@ bool Parser::Expression()
 	if (!Logical())
 		return false;
 
+	// TODO: replace colon with Node::Type
+	// decli, decle
+	// TODO: add type specifier to node
 	if (Try(Token::Colon))
 	{
-		auto colon = NewNode(Consume());
+		auto node = NewNode(Consume());
 		auto ident = Pop();
 
 		// if assign, is auto
 		// if typeid, is typed
 
+		if (Try(Token::OpenParan))
+		{
+			Consume();
+
+			auto list = NewNode(Node::List);
+
+			while (true)
+			{
+				if (Try(Token::CloseParan))
+				{
+					break;
+				}
+				else if (TryConcreteType())
+				{
+					node->Add(NewNode(Consume()));
+
+					if (Try(Token::Comma))
+						Consume();
+				}
+				else
+				{
+					Fail(Lexer::CreateErrorMessage(Current(), "Unexpected token in args list"));
+					return false;
+				}
+			}
+
+			node->Add(list);
+			node->Add(ident);
+
+			Expect(Token::CloseParan);
+
+			if (Try(Token::Colon))
+			{
+				Consume();
+
+				if (!TryConcreteType())
+				{
+					Fail(Lexer::CreateErrorMessage(Current(), "Missing return type"));
+					return false;
+				}
+
+				// TODO: type instead of token/ident
+				auto ret = NewNode(Consume());
+			}
+
+			Expect(Token::Assign);
+
+			// TODO: uninit
+			//if (Try(Token::Uninitialized)) { ... }
+
+			if (!Logical())
+			{
+				Fail(Lexer::CreateErrorMessage(Current(), "Declaration missing assignment"));
+				return false;
+			}
+
+			node->Add(Pop());
+			node->Add(ident);
+
+			// TODO: sort out the type
+			// TODO: figure out layout on translator side w/ Node types
+			// TODO: fixed structure for Colon as a decl with stable children indices
+			// TODO: allow null children for implicit autos
+			//if (type)
+			//{
+				//node->Add(type);
+			//}
+
+			Push(node);
+
+			return true;
+		}
+
 		NodePtr type;
 
-		if (Try(Token::TypeAuto) ||
-			Try(Token::TypeInt) ||
-			Try(Token::TypeFloat) ||
-			Try(Token::TypeString) ||
-			Try(Token::Func))
+		if (Try(Token::TypeAuto) || TryConcreteType())
 		{
 			type = NewNode(Consume());
 		}
@@ -341,15 +414,15 @@ bool Parser::Expression()
 				return false;
 			}
 
-			colon->Add(Pop());
-			colon->Add(ident);
+			node->Add(Pop());
+			node->Add(ident);
 
 			if (type)
 			{
-				colon->Add(type);
+				node->Add(type);
 			}
 
-			Push(colon);
+			Push(node);
 
 			return true;
 		}

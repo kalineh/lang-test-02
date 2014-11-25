@@ -60,6 +60,16 @@ private:
 	int indent;
 
 	bool Try(Token::Type type);
+
+	bool TryAny2(Token::Type a, Token::Type b) { return Try(a) || Try(b); }
+	bool TryAny3(Token::Type a, Token::Type b, Token::Type c) { return Try(a) || Try(b) || Try(c); }
+	bool TryAny4(Token::Type a, Token::Type b, Token::Type c, Token::Type d) { return Try(a) || Try(b) || Try(c) || Try(d); }
+
+	bool TryConcreteType()
+	{
+		return TryAny3(Token::TypeInt, Token::TypeFloat, Token::TypeString);
+	}
+
 	NodePtr Expect(Token::Type type);
 
 	std::string Lead(int level);
